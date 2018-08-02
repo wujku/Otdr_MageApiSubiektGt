@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="mageapisubiektgt" translate="label" sortOrder="10">
+            <label>API Subiekt GT</label>
+        </tab>
+        <section id="mageapisubiektgt" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>API Subiekt GT - konfiguracja</label>
+            <tab>mageapisubiektgt</tab>
+            <resource>Otdr_MageApiSubiektGt::subiektgtgateway_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Konfiguracja pluginu do komunikacji z subiektem.</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Aktywuj moduł</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="subiekt_api_gateway" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Adres bramki</label>
+                    <comment>Adres URL dostępu do REST API Subiekt GT.</comment>            
+                </field>
+                <field id="subiekt_api_key" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API klucz</label>
+                    <comment>Klucz dostępu do API.</comment>            
+                </field>
+                <field id="subiekt_api_prefix" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Prefix</label>
+                    <comment>Prefix dla numerów zamówień w subiekcie.</comment>  
+                </field>
+                <field id="subiekt_api_trans_symbol" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Kod transportu</label>
+                    <comment>Kod usługi transportowej w subiekcie.</comment>  
+                </field>                                                  
+                <field id="subiekt_api_warehouse_id" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Id Magazyn-u</label>
+                    <comment>ID magazynu dla którego mają być dokonowane rezerwacje.</comment>                      
+                </field>                                                                  
+                <field id="subiekt_api_error_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Status błędu</label>
+                     <comment>Zmień status zamówienia gdy wystąpi problem z komunikacją.</comment> 
+                     <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
+                </field>
+                <field id="subiekt_api_sell_doc_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Status sprzedaży</label>
+                     <comment>Zmień na status gdy wygeneruje się PA lub FS.</comment> 
+                     <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
+                </field>  
+                <field id="subiekt_api_unlock_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Status przetwarzania</label>
+                     <comment>Zmień status który odblokuje przetwarzanie.</comment> 
+                     <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
+                </field> 
+                <field id="subiekt_api_newproducts" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Nowe produkty</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Automatycznie tworzyć nowe produkty w subiekcie.</comment> 
+                </field>  
+                <field id="subiekt_api_pdfs_path" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Ściezka PDF</label>
+                    <comment>Katalog do przechowywania dokumentów sprzedaży w formacie PDF.</comment>                      
+                </field>                                                           
+            </group>
+        </section>
+    </system>
+</config>
