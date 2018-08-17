@@ -11,9 +11,10 @@
    			<argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>
    		</arguments>
    </type>   
-   <type name="Otdr\MageApiSubiektGt\Cron">
+   <type name="Otdr\MageApiSubiektGt\Cron\OrderSend">
    		<arguments>
    			<argument name="config" xsi:type="object">Otdr\MageApiSubiektGt\Helper\Config</argument>
+   			<argument name="orderRepository" xsi:type="object">Magento\Sales\Model\OrderRepository</argument>	
    		</arguments>
    </type>   
    <type name="Otdr\MageApiSubiektGt\Console\OrderSendCommand">
