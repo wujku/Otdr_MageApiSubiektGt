@@ -25,8 +25,8 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 				)
 				->addColumn(
 					'id_order',
-					\Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-					null,
+					\Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+					20,
 					['nullable => false'],
 					'Magento order ID'
 				)
