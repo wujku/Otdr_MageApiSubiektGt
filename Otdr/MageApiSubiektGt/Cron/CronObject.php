@@ -1,0 +1,92 @@
+<?php
+namespace Otdr\MageApiSubiektGt\Cron;
+
+use Otdr\MageApiSubiektGt\Helper\SubiektApi;
+use Exception;
+
+abstract class CronObject {
+   
+   protected $logger;
+   protected $config;
+   protected $ordersProcessed = 0;
+   protected $end_point = '';
+   protected $api_key = '';
+   protected $subiekt_api_ean_attrib = '';
+   protected $subiekt_api_newproducts = false;
+   protected $subiekt_api_prefix = '';
+   protected $subiekt_api_warehouse_id = 1;
+   protected $subiekt_api_trans_symbol;
+   protected $resource = false;
+   protected $logArray = array();
+   public $appState = false;
+
+
+   public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config ,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+      $this->appState = $appState;
+      $this->config = $config;    
+      $this->logger = $logger;  
+      	  
+      $this->resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+
+      /* Load module configuration */
+      $this->end_point = $this->config->getGen('subiekt_api_gateway');
+      $this->api_key = $this->config->getGen('subiekt_api_key');      
+      $this->subiekt_api_ean_attrib = $this->config->getGen('subiekt_api_ean_attrib'); 
+      $this->subiekt_api_newproducts = $this->config->getGen('subiekt_api_newproducts');
+      $this->subiekt_api_prefix  =   $this->config->getGen('subiekt_api_prefix');
+      $this->subiekt_api_warehouse_id = $this->config->getGen('subiekt_api_warehouse_id');
+      $this->subiekt_api_trans_symbol = $this->config->getGen('subiekt_api_trans_symbol');
+      /* Setting area of executing */
+      $this->appState->setAreaCode('adminhtml');
+      
+   }
+
+   public function getLog(){
+      return $this->logArray;
+   }
+
+   protected function productQtyUpdate($code,$qty){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+      $stockRegistry = $objectManager->get('\Magento\CatalogInventory\Api\StockRegistryInterface');
+      $productObject = $objectManager->get('\Magento\Catalog\Model\Product');
+
+      if(!empty($this->subiekt_api_ean_attrib)){     
+                             
+            $product = $productObject->loadByAttribute($this->subiekt_api_ean_attrib, $code);
+            if($product){
+               $stockItem = $stockRegistry->getStockItem($product->getId());
+               $stockItem->setData('qty',$qty);            
+               $stockItem->save();
+               return true;
+            }           
+      }else{            
+            $id_product = $productObject->getIdBySku($code);
+            if(intval($id_product)>0){                                                     
+               $stockItem = $stockRegistry->getStockItem($id_product);
+               $stockItem->setQty($qty);            
+               $stockItem->save();
+               return true;
+            }            
+      }
+      return false;
+   }
+
+   
+   protected function lockOrder($id_order){
+      $connection = $this->resource->getConnection();
+      $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+      $dml = 'UPDATE '.$tableName.' SET is_locked = 1 WHERE id_order = \''.$id_order.'\'';
+      $connection->query($dml);
+   }
+
+   protected function unlockOrder($id_order){
+      $connection = $this->resource->getConnection();
+      $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+		$dml = 'UPDATE '.$tableName.' SET is_locked = 0 WHERE id_order = \''.$id_order.'\'';
+      $connection->query($dml);
+   }
+
+}
+
+?>

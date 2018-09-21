@@ -23,7 +23,7 @@ class OrderSendCommand extends Command
        parent::configure();
    }
    protected function execute(InputInterface $input, OutputInterface $output)
-   {
+   {        
         if($this->orderSend->execute()){
             $output->writeln('Processing OK.');
             $output->writeln('Sent orders: '.$this->orderSend->getOrdersProcessed());

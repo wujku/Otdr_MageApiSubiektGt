@@ -50,6 +50,10 @@
                      <comment>Zmień status który odblokuje przetwarzanie.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
                 </field> 
+                <field id="subiekt_api_ean_attrib" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Ean</label>
+                     <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>             
+                </field>                 
                 <field id="subiekt_api_newproducts" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Nowe produkty</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

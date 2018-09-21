@@ -11,11 +11,18 @@
    			<argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>
    		</arguments>
    </type>   
+   <type name="Otdr\MageApiSubiektGt\Cron\CronObject">
+      <arguments>
+        <argument name="config" xsi:type="object">Otdr\MageApiSubiektGt\Helper\Config</argument>        
+        <argument name="logger" xsi:type="object">\Psr\Log\LoggerInterface</argument>          
+        <argument name="appState" xsi:type="object">\Magento\Framework\App\State</argument>
+      </arguments>
+   </type>    
    <type name="Otdr\MageApiSubiektGt\Cron\OrderSend">
    		<arguments>
-   			<argument name="config" xsi:type="object">Otdr\MageApiSubiektGt\Helper\Config</argument>
-   			<argument name="orderRepository" xsi:type="object">Magento\Sales\Model\OrderRepository</argument>	
-        <argument name="logger" xsi:type="object">\Psr\Log\LoggerInterface</argument>          
+   			<argument name="config" xsi:type="object">Otdr\MageApiSubiektGt\Helper\Config</argument>   			
+        <argument name="logger" xsi:type="object">\Psr\Log\LoggerInterface</argument>      
+        <argument name="appState" xsi:type="object">\Magento\Framework\App\State</argument>                  
    		</arguments>
    </type>   
    <type name="Otdr\MageApiSubiektGt\Console\OrderSendCommand">
