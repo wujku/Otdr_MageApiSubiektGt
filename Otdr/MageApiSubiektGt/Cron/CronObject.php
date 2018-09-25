@@ -16,6 +16,11 @@ abstract class CronObject {
    protected $subiekt_api_prefix = '';
    protected $subiekt_api_warehouse_id = 1;
    protected $subiekt_api_trans_symbol;
+   /*Status*/
+   protected $subiekt_api_order_status = '';
+   protected $subiekt_api_sell_doc_status = ''; 
+   protected $subiekt_api_order_processing = '';
+
    protected $resource = false;
    protected $logArray = array();
    public $appState = false;
@@ -85,6 +90,22 @@ abstract class CronObject {
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
 		$dml = 'UPDATE '.$tableName.' SET is_locked = 0 WHERE id_order = \''.$id_order.'\'';
       $connection->query($dml);
+   }
+
+
+   protected function addLog($id_order,$comment_txt,$status = 'processing'){
+      /*Add comment log from subiekt*/ 
+      $comment_txt = 'Subiekt GT info: '.$comment_txt;
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+      $order = $objectManager->create('\Magento\Sales\Model\Order')->load($id_order); 
+      $order->addStatusToHistory($status, $comment_txt, false);
+      $order->save();      
+      //TODO: add to log msg
+   }
+
+
+   protected function addErrorLog($id_order,$comment_txt){
+      $this->addLog($id_order,$comment_txt,'holded');
    }
 
 }

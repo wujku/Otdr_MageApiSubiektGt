@@ -21,8 +21,12 @@ class OrderSend extends CronObject
          return $result;
    }
 
-   protected function updateOrderStatus(){
-
+   protected function updateOrderStatus($id_order,$order_reference){
+      $connection = $this->resource->getConnection();
+      $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+      $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference} WHERE id_order = {$id_order}";
+      $connection->query($dml);
+      $this->addLog($id_order,'Zamówienie przesłane nr'.$order_reference);
    }
 
    protected function getOrderData($id_order){
@@ -42,8 +46,9 @@ class OrderSend extends CronObject
       foreach($orders_to_send as $order){
          $id_order = $order['id_order'];     
 
+         print("Sending order no \"{$order['id_order']}\": ");
          /* Locking order for processing */
-        // $this->lockOrder($id_order);
+         $this->lockOrder($id_order);
 
          $order_data = $this->getOrderData($id_order);
 
@@ -121,36 +126,44 @@ class OrderSend extends CronObject
             array_push($order_json[$id_order]['products'],$a_sp);
          }
          
-         
-      
-         var_dump($order_json);
+                  
          /* Sending order data to SubiektGt API */
-         /*
+         $fail = false;
          $result = $subiektApi->call('order/add',$order_json[$id_order]);                  
-         if(!$result){
-            throw new Exception('Can\'t connect to API check configuration!', 1);                 
+         if(!$result){ 
+            $fail = true;
+            $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
+
          }
-         if($result['state'] == 'fail'){
-            throw new Exception($result['message'], 1);         
+         if($result['state'] == 'fail'){            
+            $fail = true;
+            $this->addErrorLog($id_order,$result['message']);            
          }
-         */
+         
 
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
 
-         /* Update order processing status */
-         //TODO: HERE
+   
+         /* Is all Okey */
+         if(!$fail){
+            /* Update order processing status */
+            $this->updateOrderStatus($id_order,$result['data']['order_ref']);            
 
-         /* Update products qty on magento */
-         $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
-         if($result['state'] == 'success'){
-            foreach($result['data'] as $ean13 => $pd){                      
-               if(is_array($pd)){                  
-                  $this->productQtyUpdate($ean13,$pd['available']);
+            /* Update products qty on magento */
+            $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
+            if($result['state'] == 'success'){
+               foreach($result['data'] as $ean13 => $pd){                      
+                  if(is_array($pd)){                  
+                     $this->productQtyUpdate($ean13,$pd['available']);
+                  }
                }
-            }
-         }     
+            } 
+            print("OK\n");
+         }else{
+            print("Error\n");
+         }
 
       }
       
