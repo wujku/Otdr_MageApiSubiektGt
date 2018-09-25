@@ -11,17 +11,27 @@ class OrderSaver implements ObserverInterface {
  
     public function execute(\Magento\Framework\Event\Observer $observer) { 
         $order = $observer->getEvent()->getOrder();
-        $orderId = $order->getEntityId();
-
- 		if($orderId){
+        $id_order = $order->getId();        
+        
+        if(!empty($id_order) && !$this->isExists($id_order)){            
 			$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
 			$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 			$connection = $resource->getConnection();
 			$tableName = $resource->getTableName('otdr_mageapisubiektgt');
 
-			$dml = 'INSERT INTO '.$tableName.' VALUES(0,\''.$orderId.'\',0,0,0,0,\'\',\'\',\'\',NOW(),NOW(),0)';
-            //var_dump($dml);
+			$dml = 'INSERT INTO '.$tableName.' VALUES(0,\''.$id_order.'\',0,0,0,0,\'\',\'\',\'\',NOW(),NOW(),0)';
 			$connection->query($dml);
  		}
+    }
+
+
+    protected function isExists($id_order){
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();           
+        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection = $resource->getConnection();
+        $tableName = $resource->getTableName('otdr_mageapisubiektgt');
+        $query = "SELECT count(id_order) as cnt FROM {$tableName} WHERE id_order = {$id_order}";
+        $result = $connection->fetchAll($query);
+        return intval($result[0]['cnt']);
     }
 }

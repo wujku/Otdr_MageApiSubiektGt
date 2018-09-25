@@ -81,14 +81,14 @@ abstract class CronObject {
    protected function lockOrder($id_order){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = 'UPDATE '.$tableName.' SET is_locked = 1 WHERE id_order = \''.$id_order.'\'';
+      $dml = 'UPDATE '.$tableName.' SET is_locked = 1, upd_date = NOW() WHERE id_order = \''.$id_order.'\'';
       $connection->query($dml);
    }
 
    protected function unlockOrder($id_order){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-		$dml = 'UPDATE '.$tableName.' SET is_locked = 0 WHERE id_order = \''.$id_order.'\'';
+		$dml = 'UPDATE '.$tableName.' SET is_locked = 0, upd_date = NOW() WHERE id_order = \''.$id_order.'\'';
       $connection->query($dml);
    }
 

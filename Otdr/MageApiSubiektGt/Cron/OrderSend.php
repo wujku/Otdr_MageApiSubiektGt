@@ -24,7 +24,7 @@ class OrderSend extends CronObject
    protected function updateOrderStatus($id_order,$order_reference){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference} WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference}, upd_date = NOW() WHERE id_order = {$id_order}";
       $connection->query($dml);
       $this->addLog($id_order,'Zamówienie przesłane nr'.$order_reference);
    }
@@ -45,13 +45,28 @@ class OrderSend extends CronObject
                   
       foreach($orders_to_send as $order){
          $id_order = $order['id_order'];     
+         
 
          print("Sending order no \"{$order['id_order']}\": ");
-         /* Locking order for processing */
-         $this->lockOrder($id_order);
+         
+         
 
          $order_data = $this->getOrderData($id_order);
+         
+         /* check order status */
+         if($order_data->getStatus() != 'pending' ){
+            print ("skipped\n");
+            continue;
+         }
 
+         if($order_data->getStatus() != 'pending_payment' ){
+            print ("skipped\n");
+            continue;
+         }
+
+         /* Locking order for processing */
+         
+         $this->lockOrder($id_order);
          /* Bulding order array */
          $payment = $order_data->getPayment()->getData();
          $shipping = $order_data->getShippingDescription();   
