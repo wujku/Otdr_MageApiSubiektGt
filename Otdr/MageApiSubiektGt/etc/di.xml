@@ -2,10 +2,17 @@
    <type name="Magento\Framework\Console\CommandList">
        <arguments>
            <argument name="commands" xsi:type="array">
-               <item name="mageapisubiektgtSendOrders" xsi:type="object">Otdr\MageApiSubiektGt\Console\OrderSendCommand</item>
-           </argument>
+                <item name="mageapisubiektgtSendOrders" xsi:type="object">Otdr\MageApiSubiektGt\Console\OrderSendCommand</item> 
+              </argument>
        </arguments>
    </type>
+   <type name="Magento\Framework\Console\CommandList">
+       <arguments>
+              <argument name="commands" xsi:type="array">              
+               <item name="mageapisubiektgtMakeSell" xsi:type="object">Otdr\MageApiSubiektGt\Console\MakeSaleCommand</item>
+           </argument>
+       </arguments>
+   </type>   
    <type name="Otdr\MageApiSubiektGt\Helper\Config">
    		<arguments>
    			<argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>

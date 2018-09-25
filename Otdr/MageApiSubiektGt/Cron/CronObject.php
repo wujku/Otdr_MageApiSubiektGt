@@ -43,7 +43,7 @@ abstract class CronObject {
       $this->subiekt_api_warehouse_id = $this->config->getGen('subiekt_api_warehouse_id');
       $this->subiekt_api_trans_symbol = $this->config->getGen('subiekt_api_trans_symbol');
       /* Setting area of executing */
-      $this->appState->setAreaCode('adminhtml');
+     //$this->appState->setAreaCode('adminhtml');
       
    }
 

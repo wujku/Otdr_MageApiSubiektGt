@@ -4,5 +4,9 @@
         <job name="sendorders" instance="Otdr\MageApiSubiektGt\Cron\OrderSend" method="execute">
             <schedule>*/5 * * * *</schedule>
         </job>
+
+        <job name="makesale" instance="Otdr\MageApiSubiektGt\Cron\MakeSale" method="execute">
+            <schedule>*/5 * * * *</schedule>
+        </job>        
     </group>
 </config>
