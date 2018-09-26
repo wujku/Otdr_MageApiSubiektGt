@@ -55,12 +55,7 @@ class OrderSend extends CronObject
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
-         if($order_data->getStatus() != 'pending' ){
-            print ("skipped\n");
-            continue;
-         }
-
-         if($order_data->getStatus() != 'pending_payment' ){
+         if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment'){
             print ("skipped\n");
             continue;
          }
@@ -146,8 +141,7 @@ class OrderSend extends CronObject
          /* Sending order data to SubiektGt API */
          $fail = false;
          $result = $subiektApi->call('order/add',$order_json[$id_order]);                  
-         if(!$result){ 
-            $fail = true;
+         if(!$result){             
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
             $this->unlockOrder($id_order);
             return false;
