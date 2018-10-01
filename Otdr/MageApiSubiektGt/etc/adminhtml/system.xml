@@ -39,14 +39,14 @@
                 </field> 
                 <field id="subiekt_api_sell_doc_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status sprzedaży</label>
-                     <comment>Zmień na status gdy wygeneruje się PA lub FS.</comment> 
+                     <comment>Zmień na status gdy wygeneruje się PA lub FS i zostanie przkazane na magazyn.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
                 </field>  
              <field id="subiekt_api_order_processing" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status przetwarzania</label>
                      <comment>Zmień na status gdy oczekuje na towar od dostawcy.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field> 
+                </field>                  
                 <field id="subiekt_api_ean_attrib" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Ean</label>
                      <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>             

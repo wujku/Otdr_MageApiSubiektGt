@@ -27,7 +27,7 @@ class MakeSaleCommand extends Command
         if($this->makeSale->execute()){
             $output->writeln('Processing OK.');
             $output->writeln($this->makeSale->getLog());
-            $output->writeln('Made sale: '.$this->makeSale->getOrdersProcessed());
+            $output->writeln('Processed sale: '.$this->makeSale->getOrdersProcessed());
         }else{
             $output->writeln('Processing ERROR.');
         }

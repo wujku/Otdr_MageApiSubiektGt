@@ -92,6 +92,12 @@ abstract class CronObject {
       $connection->query($dml);
    }
 
+   protected function getOrderData($id_order){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->load($id_order);
+      return $order;
+   }
+
 
    protected function addLog($id_order,$comment_txt,$status = 'processing'){
       /*Add comment log from subiekt*/ 

@@ -26,7 +26,7 @@ class OrderSendCommand extends Command
    {        
         if($this->orderSend->execute()){
             $output->writeln('Processing OK.');
-            $output->writeln('Sent orders: '.$this->orderSend->getOrdersProcessed());
+            $output->writeln('Processed orders: '.$this->orderSend->getOrdersProcessed());
         }else{
             $output->writeln('Processing ERROR.');
         }

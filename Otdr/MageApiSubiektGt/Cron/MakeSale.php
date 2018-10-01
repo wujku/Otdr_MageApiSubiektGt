@@ -15,7 +15,7 @@ class MakeSale extends CronObject
    protected function getOrdersIds(){
          $connection = $this->resource->getConnection();
          $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-         $query = 'SELECT id_order FROM '.$tableName.' WHERE is_locked = 0 AND gt_order_sent = 1 AND gt_sell_doc_request = 0';
+         $query = 'SELECT id_order,gt_order_ref FROM '.$tableName.' WHERE is_locked = 0 AND gt_order_sent = 1 AND gt_sell_doc_request = 0';
          $result = $connection->fetchAll($query);
          return $result;
    }
@@ -31,19 +31,34 @@ class MakeSale extends CronObject
 	public function execute(){
           	
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);
-      $orders_to_send = $this->getOrdersIds();
+      $orders_to_make_sale = $this->getOrdersIds();
                   
-      foreach($orders_to_send as $order){
+      foreach($orders_to_make_sale as $order){
          $id_order = $order['id_order'];     
       
          $this->ordersProcessed++;
 
+         /* Locking order for processing */
          $this->lockOrder($id_order);
+         
+         /*getting order data*/
+         $order_data = $this->getOrderData($id_order);
+         
+         /* check order status */
+         if($order_data->getStatus() != $this->subiekt_api_order_status){
+            $this->unlockOrder($id_order);
+            print ("skipped\n");
+            continue;
+         }
+         
+
+         $order_json[$id_order] = array('order_ref'=>$order['gt_order_ref']);
+
+
 
          $fail = false;
-         $result = $subiektApi->call('order/add',$order_json[$id_order]);                  
-         if(!$result){ 
-            $fail = true;
+         $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);                  
+         if(!$result){             
             $this->unlockOrder($id_order);
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
             return false;
@@ -53,8 +68,7 @@ class MakeSale extends CronObject
             $fail = true;
             $this->addErrorLog($id_order,$result['message']);            
          }
-         
-
+                  
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
@@ -62,10 +76,14 @@ class MakeSale extends CronObject
    
          /* Is all Okey */
          if(!$fail){
-            /* Update order processing status */
-            $this->updateOrderStatus($id_order,$result['data']['order_ref']);            
-
-            print("OK\n");
+            if(isset($result['data']['doc_state']) && $result['data']['doc_state']=='warning' && $order_data->getStatus() == $this->subiekt_api_order_status){
+                  $this->addLog('processing', $result['data']['message'], $this->$subiekt_api_order_processing);
+                  print("Warning\n");
+            }else{
+               /* Update order processing status */
+               $this->updateOrderStatus($id_order,$result['data']['order_ref']);            
+               print("OK - Send!\n");
+            }
          }else{
             print("Error\n");
          }

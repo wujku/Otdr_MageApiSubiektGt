@@ -13,7 +13,9 @@ class OrderSaver implements ObserverInterface {
         $order = $observer->getEvent()->getOrder();
         $id_order = $order->getId();        
         
-        if(!empty($id_order) && !$this->isExists($id_order)){            
+
+        $isExists = $this->isExists($id_order);
+        if(!empty($id_order) && !$isExists){            
 			$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
 			$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 			$connection = $resource->getConnection();
@@ -22,6 +24,10 @@ class OrderSaver implements ObserverInterface {
 			$dml = 'INSERT INTO '.$tableName.' VALUES(0,\''.$id_order.'\',0,0,0,0,\'\',\'\',\'\',NOW(),NOW(),0)';
 			$connection->query($dml);
  		}
+
+        if($isExists){
+            //TODO: locking orders for processing
+        }
     }
 
 

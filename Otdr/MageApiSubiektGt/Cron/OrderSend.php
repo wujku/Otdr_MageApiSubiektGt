@@ -30,12 +30,6 @@ class OrderSend extends CronObject
 
    }
 
-   protected function getOrderData($id_order){
-      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->load($id_order);
-      return $order;
-   }
-
    public function execute()
    {
       
@@ -50,19 +44,21 @@ class OrderSend extends CronObject
          $this->ordersProcessed++;
          print("Sending order no \"{$order['id_order']}\": ");
          
+         /* Locking order for processing */
+         $this->lockOrder($id_order);
          
-
+         /*getting order data*/
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
          if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment'){
+            $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;
          }
-
-         /* Locking order for processing */
+      
          
-         $this->lockOrder($id_order);
+         
          /* Bulding order array */
          $payment = $order_data->getPayment()->getData();
          $shipping = $order_data->getShippingDescription();   
@@ -75,6 +71,7 @@ class OrderSend extends CronObject
             
          }
          
+         //TODO: setting 
          $order_json[$id_order] = array(
                            'create_product_if_not_exists'    => $this->subiekt_api_newproducts,
                            'amount' =>$payment['amount_ordered'],
@@ -167,7 +164,8 @@ class OrderSend extends CronObject
             $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
             if($result['state'] == 'success'){
                foreach($result['data'] as $ean13 => $pd){                      
-                  if(is_array($pd)){                  
+                  if(is_array($pd)){          
+                  //TODO: sprawdzic czy produkt jest produktem  zpółki wirtualnej czy z magazynu        
                      $this->productQtyUpdate($ean13,$pd['available']);
                   }
                }
