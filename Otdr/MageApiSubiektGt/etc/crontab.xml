@@ -6,7 +6,7 @@
         </job>
 
         <job name="makesale" instance="Otdr\MageApiSubiektGt\Cron\MakeSale" method="execute">
-            <schedule>*/5 * * * *</schedule>
+            <schedule>*/5 7-13 * * *</schedule>
         </job>        
     </group>
 </config>

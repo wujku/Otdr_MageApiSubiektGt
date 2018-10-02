@@ -45,7 +45,7 @@ class MakeSale extends CronObject
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
-         if($order_data->getStatus() != $this->subiekt_api_order_status){
+         if($order_data->getStatus() != $this->subiekt_api_order_status && $order_data->getStatus()!=$this->subiekt_api_order_processing){
             $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;
@@ -74,12 +74,20 @@ class MakeSale extends CronObject
          $this->unlockOrder($id_order);
 
          if(isset($result['data']['doc_state']) && $result['data']['doc_state']=='warning' && $order_data->getStatus() == $this->subiekt_api_order_status){
-               $this->addLog('processing', $result['data']['message'], $this->subiekt_api_order_processing);
+               $this->addLog($this->subiekt_api_order_processing, $result['data']['message']);
                print("Warning\n");
-         }else{
+         }elseif($result['data']['doc_state']=='success'){
             /* Update order processing status */
-            $this->updateOrderStatus($id_order,$result['data']['order_ref']);                           
-            print("OK - Send!\n");
+            if($result['data']['doc_amount'] == $order_data->getGrandTotal()){
+               $this->updateOrderStatus($id_order,$result['data']['order_ref']);   
+
+               /* Creating invoice */
+               $this->createInvoice($id_order);
+               print("OK - Send!\n");
+            }else{
+               $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: {$result['data']['order_ref']}=>{$$result['data']['doc_amount']}"); 
+               print("Warning: amount collision\n");
+            }
          }
     
       }
@@ -87,6 +95,36 @@ class MakeSale extends CronObject
       return true;
 
 	}
+
+   protected function createInvoice($id_order){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->load($id_order); 
+
+
+      if ($order->canInvoice()) {
+          // Create invoice for this order
+          $invoice = $objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
+
+          // Make sure there is a qty on the invoice
+          if (!$invoice->getTotalQty()) {
+              throw new \Magento\Framework\Exception\LocalizedException(
+                          __('You can\'t create an invoice without products.')
+                      );
+          }
+
+          // Register as invoice item
+          $invoice->setRequestedCaptureCase(\Magento\Sales\Model\Order\Invoice::CAPTURE_OFFLINE);
+          $invoice->register();
+
+          // Save the invoice to the order
+          $transaction = $objectManager->create('Magento\Framework\DB\Transaction')
+              ->addObject($invoice)
+              ->addObject($invoice->getOrder());
+
+          return $transaction->save();
+
+
+   }
 
    public function getOrdersProcessed(){
       return $this->ordersProcessed;

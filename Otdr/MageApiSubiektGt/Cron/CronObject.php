@@ -46,6 +46,14 @@ abstract class CronObject {
       $this->subiekt_api_prefix  =   $this->config->getGen('subiekt_api_prefix');
       $this->subiekt_api_warehouse_id = $this->config->getGen('subiekt_api_warehouse_id');
       $this->subiekt_api_trans_symbol = $this->config->getGen('subiekt_api_trans_symbol');
+
+      /*Statuses*/
+      $this->subiekt_api_order_status = $this->config->getGen('subiekt_api_order_status');
+      $this->subiekt_api_sell_doc_status = $this->config->getGen('subiekt_api_sell_doc_status');
+      $this->subiekt_api_order_processing = $this->config->getGen('subiekt_api_order_processing');
+      /*Flags*/
+
+
       /* Setting area of executing */
      //$this->appState->setAreaCode('adminhtml');
       
