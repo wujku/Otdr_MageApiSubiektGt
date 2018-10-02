@@ -105,19 +105,19 @@ class OrderSend extends CronObject
 
          $products_array = array(); 
          foreach($products as $product){
-            //var_Dump($product->getCustomAttribute('ean'));
+            //var_Dump($product->getCustomAttribute('ean'));            
             $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($product->getProductId());            
             $products_array[] =  array(
                                           'name'   =>                      $product->getName(),
-                                          'price'  =>                      $product->getPrice(),
+                                          'price'  =>                      $product->getPrice()-$product->getDiscountAmount(),
                                           'qty'    =>                      $product->getQtyOrdered(),
-                                          'price_before_discount' =>       $product->getPrice(),
+                                          'price_before_discount' =>       $product->getPrice(),                                          
                                           'code'   =>                      $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$product->getSku(),
                                           'time_of_delivery'   =>          2,
                                           'id_store' => $this->subiekt_api_warehouse_id
                                        );
          }
-
+         //var_dump($products_array);
          $order_json[$id_order]['products'] = $products_array;
          
          /* Shippment information */
@@ -135,8 +135,7 @@ class OrderSend extends CronObject
          }
          
                   
-         /* Sending order data to SubiektGt API */
-         $fail = false;
+         /* Sending order data to SubiektGt API */         
          $result = $subiektApi->call('order/add',$order_json[$id_order]);                  
          if(!$result){             
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
@@ -144,39 +143,34 @@ class OrderSend extends CronObject
             return false;
 
          }
-         if($result['state'] == 'fail'){            
-            $fail = true;
-            $this->addErrorLog($id_order,$result['message']);            
+         if($result['state'] == 'fail'){                        
+            $this->addErrorLog($id_order,$result['message']);    
+            $this->unlockOrder($id_order);       
+            print("Error: {$result['message']}\n");
+            continue;
          }
          
 
-
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
+         
+         /* Update order processing status */
+         $this->updateOrderStatus($id_order,$result['data']['order_ref']);            
 
-   
-         /* Is all Okey */
-         if(!$fail){
-            /* Update order processing status */
-            $this->updateOrderStatus($id_order,$result['data']['order_ref']);            
-
-            /* Update products qty on magento */
-            $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
-            if($result['state'] == 'success'){
-               foreach($result['data'] as $ean13 => $pd){                      
-                  if(is_array($pd)){          
-                  //TODO: sprawdzic czy produkt jest produktem  zpółki wirtualnej czy z magazynu        
-                     $this->productQtyUpdate($ean13,$pd['available']);
-                  }
+         /* Update products qty on magento */
+         $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
+         if($result['state'] == 'success'){
+            foreach($result['data'] as $ean13 => $pd){                      
+               if(is_array($pd)){          
+               //TODO: sprawdzic czy produkt jest produktem  zpółki wirtualnej czy z magazynu        
+                  $this->productQtyUpdate($ean13,$pd['available']);
                }
-            } 
-            print("OK\n");
-         }else{
-            print("Error\n");
-         }         
+            }
+         } 
+         print("OK\n");
+               
       }
-      
-      
+            
       return true;
    }
 

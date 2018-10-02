@@ -21,6 +21,10 @@ abstract class CronObject {
    protected $subiekt_api_sell_doc_status = ''; 
    protected $subiekt_api_order_processing = '';
 
+   /*Flags*/
+   protected $subiekt_api_wrapping_id_flag = 0;
+
+   
    protected $resource = false;
    protected $logArray = array();
    public $appState = false;
