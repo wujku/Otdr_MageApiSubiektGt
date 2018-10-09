@@ -106,7 +106,7 @@ abstract class CronObject {
 
    protected function getOrderData($id_order){
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->load($id_order);
+      $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order);
       return $order;
    }
 
@@ -115,7 +115,7 @@ abstract class CronObject {
       /*Add comment log from subiekt*/ 
       $comment_txt = 'Subiekt GT info: '.$comment_txt;
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
-      $order = $objectManager->create('\Magento\Sales\Model\Order')->load($id_order); 
+      $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order); 
       $order->addStatusToHistory($status, $comment_txt, false);
       $order->save();      
       //TODO: add to log msg

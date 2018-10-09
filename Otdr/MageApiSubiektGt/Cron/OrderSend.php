@@ -24,9 +24,9 @@ class OrderSend extends CronObject
    protected function updateOrderStatus($id_order,$order_reference){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference}, upd_date = NOW() WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference}', upd_date = NOW() WHERE id_order = {$id_order}";
       $connection->query($dml);
-      $this->addLog($id_order,'Zamówienie przesłane nr'.$order_reference,!empty($this->subiekt_api_order_status)?$this->subiekt_api_order_status:NULL);      
+      $this->addLog($id_order,'Zamówienie przesłane nr <b>'.$order_reference."</b>",!empty($this->subiekt_api_order_status)?$this->subiekt_api_order_status:NULL);      
 
    }
 
@@ -140,6 +140,7 @@ class OrderSend extends CronObject
          if(!$result){             
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
             $this->unlockOrder($id_order);
+            print("Error: {$result}\n");
             return false;
 
          }

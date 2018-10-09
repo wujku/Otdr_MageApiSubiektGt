@@ -11,7 +11,7 @@ class OrderSaver implements ObserverInterface {
  
     public function execute(\Magento\Framework\Event\Observer $observer) { 
         $order = $observer->getEvent()->getOrder();
-        $id_order = $order->getId();        
+        $id_order = $order->getIncrementId();        
         
 
         $isExists = $this->isExists($id_order);
