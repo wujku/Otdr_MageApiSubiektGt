@@ -16,7 +16,9 @@ abstract class CronObject {
    protected $subiekt_api_prefix = '';
    protected $subiekt_api_warehouse_id = 1;
    protected $subiekt_api_trans_symbol;
-   /*Status*/
+
+
+    /*Status*/
    protected $subiekt_api_order_status = '';
    protected $subiekt_api_sell_doc_status = ''; 
    protected $subiekt_api_order_processing = '';
@@ -31,11 +33,15 @@ abstract class CronObject {
 
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config ,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState){
+
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
       $this->appState = $appState;
       $this->config = $config;    
       $this->logger = $logger;  
-      	  
+      
+      /* Setting area of executing */
+     //$this->appState->setAreaCode('adminhtml');
+
       $this->resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 
       /* Load module configuration */
@@ -51,11 +57,8 @@ abstract class CronObject {
       $this->subiekt_api_order_status = $this->config->getGen('subiekt_api_order_status');
       $this->subiekt_api_sell_doc_status = $this->config->getGen('subiekt_api_sell_doc_status');
       $this->subiekt_api_order_processing = $this->config->getGen('subiekt_api_order_processing');
+
       /*Flags*/
-
-
-      /* Setting area of executing */
-     //$this->appState->setAreaCode('adminhtml');
       
    }
 
@@ -105,25 +108,61 @@ abstract class CronObject {
    }
 
    protected function getOrderData($id_order){
-      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();      
       $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order);
       return $order;
    }
 
-
-   protected function addLog($id_order,$comment_txt,$status = 'processing'){
-      /*Add comment log from subiekt*/ 
+   protected function setStatus($id_order,$comment_txt,$status = 'processing'){
       $comment_txt = 'Subiekt GT info: '.$comment_txt;
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
       $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order); 
       $order->addStatusToHistory($status, $comment_txt, false);
-      $order->save();      
-      //TODO: add to log msg
+      $order->save(); 
+   }
+
+   protected function addLog($id_order,$comment_txt){
+      /*Add comment log from subiekt*/ 
+      $comment_txt = 'Subiekt GT info: '.$comment_txt;
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+      $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order);       
+      $order->addStatusHistoryComment($comment_txt);
+      $order->save();            
    }
 
 
+   protected function createInvoice($id_order){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order); 
+
+
+      if ($order->canInvoice()) {
+          // Create invoice for this order
+          $invoice = $objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
+
+          // Make sure there is a qty on the invoice
+          if (!$invoice->getTotalQty()) {
+              throw new \Magento\Framework\Exception\LocalizedException(
+                          __('You can\'t create an invoice without products.')
+                      );
+          }
+
+          // Register as invoice item
+          $invoice->setRequestedCaptureCase(\Magento\Sales\Model\Order\Invoice::CAPTURE_OFFLINE);
+          $invoice->register();
+
+          // Save the invoice to the order
+          $transaction = $objectManager->create('Magento\Framework\DB\Transaction')
+              ->addObject($invoice)
+              ->addObject($invoice->getOrder());
+
+          return $transaction->save();
+        }
+        return false;
+   }
+
    protected function addErrorLog($id_order,$comment_txt){
-      $this->addLog($id_order,$comment_txt,'holded');
+      $this->setStatus($id_order,$comment_txt,'holded');
    }
 
 }

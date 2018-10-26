@@ -26,8 +26,7 @@ class OrderSend extends CronObject
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
       $dml = "UPDATE {$tableName} SET gt_order_sent = 1, gt_order_ref =  '{$order_reference}', upd_date = NOW() WHERE id_order = {$id_order}";
       $connection->query($dml);
-      $this->addLog($id_order,'Zamówienie przesłane nr <b>'.$order_reference."</b>",!empty($this->subiekt_api_order_status)?$this->subiekt_api_order_status:NULL);      
-
+      $this->setStatus($id_order,'Zamówienie przesłane nr <b>'.$order_reference."</b>",$this->subiekt_api_order_status);      
    }
 
    public function execute()
@@ -36,8 +35,7 @@ class OrderSend extends CronObject
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);      
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
 
-      $orders_to_send = $this->getOrdersIds();
-                  
+      $orders_to_send = $this->getOrdersIds();                 
       foreach($orders_to_send as $order){
          $id_order = $order['id_order'];     
          
@@ -51,7 +49,8 @@ class OrderSend extends CronObject
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
-         if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment'){
+         var_dump($order_data->getStatus());
+         if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment' && $order_data->getStatus() != 'processing'){
             $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;

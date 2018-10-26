@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
+        <tab id="otdr" translate="label" sortOrder="10">
+            <label>Otdr</label>
+        </tab>
         <section id="mageapisubiektgt" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>API Subiekt GT</label>
-            <tab>advanced</tab>
+            <tab>otdr</tab>
             <resource>Otdr_MageApiSubiektGt::subiektgtgateway_config</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                <label>Konfiguracja pluginu do komunikacji z subiektem.</label>
+                <label>Konfiguracja komunikacji z API SubiektGT.</label>
                 <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Aktywuj moduł</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -31,8 +34,25 @@
                 <field id="subiekt_api_warehouse_id" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Id Magazyn-u</label>
                     <comment>ID magazynu dla którego mają być dokonowane rezerwacje.</comment>                      
-                </field>                                                                  
-                <field id="subiekt_api_order_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                </field>                                                                           
+                <field id="subiekt_api_ean_attrib" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Ean</label>
+                     <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>             
+                </field>                 
+                <field id="subiekt_api_newproducts" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Nowe produkty</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Automatycznie tworzyć nowe produkty w subiekcie.</comment> 
+                </field>  
+                <field id="subiekt_api_pdfs_path" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Ściezka PDF</label>
+                    <comment>Katalog do przechowywania dokumentów sprzedaży w formacie PDF.</comment>                      
+                </field> 
+
+            </group>
+        <group id="statuses" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">  
+        <label>Statusy</label>  
+         <field id="subiekt_api_order_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status zamówienia</label>
                      <comment>Zmień na status gdy zamówienie zostanie przekazane do subiekta.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
@@ -46,20 +66,13 @@
                      <label>Status przetwarzania</label>
                      <comment>Zmień na status gdy oczekuje na towar od dostawcy.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field>                  
-                <field id="subiekt_api_ean_attrib" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                     <label>Ean</label>
-                     <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>             
-                </field>                 
-                <field id="subiekt_api_newproducts" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Nowe produkty</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Automatycznie tworzyć nowe produkty w subiekcie.</comment> 
-                </field>  
-                <field id="subiekt_api_pdfs_path" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Ściezka PDF</label>
-                    <comment>Katalog do przechowywania dokumentów sprzedaży w formacie PDF.</comment>                      
-                </field>                                                           
+                </field>        
+           
+        <field id="subiekt_api_wrapinng_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Flaga 1</label>
+                    <comment>ID flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>            
+                </field>                
+                                                          
             </group>
         </section>
     </system>

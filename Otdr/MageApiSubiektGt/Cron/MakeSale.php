@@ -9,13 +9,14 @@ class MakeSale extends CronObject
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState ){
       parent::__construct($config,$logger,$appState);
+      $this->appState->setAreaCode('adminhtml');
    }
 
 
    protected function getOrdersIds(){
          $connection = $this->resource->getConnection();
          $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-         $query = 'SELECT id_order,gt_order_ref FROM '.$tableName.' WHERE is_locked = 0 AND gt_order_sent = 1 AND gt_sell_doc_request = 0 AND upd_date<ADDDATE(NOW(), INTERVAL -30 MINUTE)';
+         $query = 'SELECT id_order,gt_order_ref FROM '.$tableName.' WHERE is_locked = 0 AND gt_order_sent = 1 AND gt_sell_doc_request = 0';
          $result = $connection->fetchAll($query);
          return $result;
    }
@@ -23,29 +24,35 @@ class MakeSale extends CronObject
    protected function updateOrderStatus($id_order,$order_reference){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1, gt_sell_doc_ref =  '{$order_reference}, upd_date = NOW() WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1, gt_sell_doc_ref =  '{$order_reference['doc_ref']}', upd_date = NOW() WHERE id_order = {$id_order}";
       $connection->query($dml);
-      $this->addLog($id_order,'Wygenerowano paragon/fakturę nr'.$order_reference,!empty($this->subiekt_api_sell_doc_status)?$this->subiekt_api_sell_doc_status:NULL);
+      $this->setStatus($id_order,'Wygenerowano paragon/fakturę nr <b>'.$order_reference['doc_ref'].'</b> kwota:'.$order_reference['doc_amount'],$this->subiekt_api_sell_doc_status);
    }
 
 	public function execute(){
           	
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);
       $orders_to_make_sale = $this->getOrdersIds();
-                  
+      
+      
       foreach($orders_to_make_sale as $order){
          $id_order = $order['id_order'];     
       
          $this->ordersProcessed++;
+         print("Making doc for order no \"{$order['id_order']}\": ");
 
          /* Locking order for processing */
          $this->lockOrder($id_order);
-         
          /*getting order data*/
+         
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
-         if($order_data->getStatus() != $this->subiekt_api_order_status && $order_data->getStatus()!=$this->subiekt_api_order_processing){
+         //var_dump($order_data->getStatus());
+         $st = $order_data->getStatus();
+         if($st != $this->subiekt_api_order_status 
+               && $st!=$this->subiekt_api_order_processing
+               && $st != 'processing'){
             $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;
@@ -54,8 +61,9 @@ class MakeSale extends CronObject
 
          $order_json[$id_order] = array('order_ref'=>$order['gt_order_ref']);
 
+         
+         $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);  
 
-         $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);                  
          if(!$result){             
             $this->unlockOrder($id_order);
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
@@ -67,64 +75,51 @@ class MakeSale extends CronObject
             $this->addErrorLog($id_order,$result['message']);  
             print("Error: {$result['message']}\n");
             continue;          
-         }
-                  
+         }        
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
 
-         if(isset($result['data']['doc_state']) && $result['data']['doc_state']=='warning' && $order_data->getStatus() == $this->subiekt_api_order_status){
-               $this->addLog($this->subiekt_api_order_processing, $result['data']['message']);
-               print("Warning\n");
-         }elseif($result['data']['doc_state']=='success'){
-            /* Update order processing status */
-            if($result['data']['doc_amount'] == $order_data->getGrandTotal()){
-               $this->updateOrderStatus($id_order,$result['data']['order_ref']);   
+         $doc_state = $result['data']['doc_state'];
+         $state_code = $result['data']['doc_state_code'];
+         $doc_amount = $result['data']['doc_amount'];
+         switch($doc_state){
+            case 'warning': 
 
-               /* Creating invoice */
-               $this->createInvoice($id_order);
-               print("OK - Send!\n");
-            }else{
-               $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: {$result['data']['order_ref']}=>{$$result['data']['doc_amount']}"); 
-               print("Warning: amount collision\n");
-            }
+                if($state_code==2 && $order_data->getStatus() == $this->subiekt_api_order_status){
+                  $this->setStatus($result['data']['message'],$this->subiekt_api_order_processing);
+                  print("Warning: {$result['data']['message']}\n");
+                }elseif($state_code==1 && $order_data->getStatus() == $this->subiekt_api_order_status ){
+                     //TODO:DELETE order reference and try again send order ?                                    
+                     $this->addErrorLog($result['data']['message']);
+                     print("Warning: {$result['data']['message']}\n");
+
+                } 
+            break;
+            
+
+            case 'ok':  
+                  //If status OK
+                  if($doc_amount == $order_data->getGrandTotal()){
+                    $this->updateOrderStatus($id_order,$result['data']);   
+
+                   // Creating invoice */
+                   //$this->createInvoice($id_order);
+                     print("OK - Send!\n");
+                  }else{
+                     $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: {$result['data']['order_ref']}=>{$result['data']['doc_amount']}"); 
+                     print("Warning: amount collision\n");
+                  }
+
+            break;
          }
-    
+            
       }
 
       return true;
 
 	}
 
-   protected function createInvoice($id_order){
-      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-      $order = $objectManager->create('Magento\Sales\Api\Data\OrderInterface')->load($id_order); 
-
-
-      if ($order->canInvoice()) {
-          // Create invoice for this order
-          $invoice = $objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
-
-          // Make sure there is a qty on the invoice
-          if (!$invoice->getTotalQty()) {
-              throw new \Magento\Framework\Exception\LocalizedException(
-                          __('You can\'t create an invoice without products.')
-                      );
-          }
-
-          // Register as invoice item
-          $invoice->setRequestedCaptureCase(\Magento\Sales\Model\Order\Invoice::CAPTURE_OFFLINE);
-          $invoice->register();
-
-          // Save the invoice to the order
-          $transaction = $objectManager->create('Magento\Framework\DB\Transaction')
-              ->addObject($invoice)
-              ->addObject($invoice->getOrder());
-
-          return $transaction->save();
-
-
-   }
 
    public function getOrdersProcessed(){
       return $this->ordersProcessed;
