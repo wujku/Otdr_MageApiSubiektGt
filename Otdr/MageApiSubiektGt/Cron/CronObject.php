@@ -22,6 +22,7 @@ abstract class CronObject {
    protected $subiekt_api_order_status = '';
    protected $subiekt_api_sell_doc_status = ''; 
    protected $subiekt_api_order_processing = '';
+   protected $subiekt_api_order_hold = '';
 
    /*Flags*/
    protected $subiekt_api_wrapping_id_flag = 0;
@@ -54,10 +55,11 @@ abstract class CronObject {
       $this->subiekt_api_trans_symbol = $this->config->getGen('subiekt_api_trans_symbol');
 
       /*Statuses*/
-      $this->subiekt_api_order_status = $this->config->getGen('subiekt_api_order_status');
-      $this->subiekt_api_sell_doc_status = $this->config->getGen('subiekt_api_sell_doc_status');
-      $this->subiekt_api_order_processing = $this->config->getGen('subiekt_api_order_processing');
-
+      $this->subiekt_api_order_status = $this->config->getStatus('subiekt_api_order_status');
+      $this->subiekt_api_sell_doc_status = $this->config->getStatus('subiekt_api_sell_doc_status');
+      $this->subiekt_api_order_processing = $this->config->getStatus('subiekt_api_order_processing');
+      $this->subiekt_api_order_hold = $this->config->getStatus('subiekt_api_order_hold');
+      
       /*Flags*/
       
    }
@@ -162,7 +164,7 @@ abstract class CronObject {
    }
 
    protected function addErrorLog($id_order,$comment_txt){
-      $this->setStatus($id_order,$comment_txt,'holded');
+      $this->setStatus($id_order,$comment_txt,$this->subiekt_api_order_hold);
    }
 
 }

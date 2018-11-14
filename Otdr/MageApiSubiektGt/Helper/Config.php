@@ -27,4 +27,8 @@ class Config
 		return $this->getConfigValue(self::XML_PATH .'general/'. $code);
 	}
 
+	public function getStatus($code){
+		return $this->getConfigValue(self::XML_PATH .'statuses/'. $code);
+	}
+
 }

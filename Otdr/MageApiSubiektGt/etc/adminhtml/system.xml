@@ -67,7 +67,11 @@
                      <comment>Zmień na status gdy oczekuje na towar od dostawcy.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
                 </field>        
-           
+                <field id="subiekt_api_order_hold" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Status wstrzymania/błędu</label>
+                     <comment>Zmień na status gdy wystąpi błąd w komunikacji lub danych zamówienia.</comment> 
+                     <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
+                </field>           
         <field id="subiekt_api_wrapinng_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Flaga 1</label>
                     <comment>ID flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>            

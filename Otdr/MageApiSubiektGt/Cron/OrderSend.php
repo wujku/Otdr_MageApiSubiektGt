@@ -49,7 +49,7 @@ class OrderSend extends CronObject
          $order_data = $this->getOrderData($id_order);
          
          /* check order status */
-         var_dump($order_data->getStatus());
+         //var_dump($order_data->getStatus());
          if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment' && $order_data->getStatus() != 'processing'){
             $this->unlockOrder($id_order);
             print ("skipped\n");

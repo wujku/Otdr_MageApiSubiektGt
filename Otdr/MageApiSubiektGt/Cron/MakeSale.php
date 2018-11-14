@@ -100,16 +100,15 @@ class MakeSale extends CronObject
 
             case 'ok':  
                   //If status OK
-                  if($doc_amount == $order_data->getGrandTotal()){
-                    $this->updateOrderStatus($id_order,$result['data']);   
 
-                   // Creating invoice */
-                   //$this->createInvoice($id_order);
-                     print("OK - Send!\n");
-                  }else{
-                     $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: {$result['data']['order_ref']}=>{$result['data']['doc_amount']}"); 
-                     print("Warning: amount collision\n");
+                  $this->updateOrderStatus($id_order,$result['data']);   
+
+                  print("OK - Send!");
+                  if($doc_amount != $order_data->getGrandTotal()){                  
+                     $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: <b style=\"color:red;\">{$result['data']['order_ref']} : {$result['data']['doc_amount']}</b>"); 
+                     print(" Warning: amount collision");
                   }
+                  print("\n");
 
             break;
          }
