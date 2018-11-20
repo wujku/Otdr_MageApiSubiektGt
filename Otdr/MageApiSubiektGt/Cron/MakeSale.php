@@ -63,7 +63,7 @@ class MakeSale extends CronObject
 
          
          $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);  
-
+         
          if(!$result){             
             $this->unlockOrder($id_order);
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
@@ -79,19 +79,19 @@ class MakeSale extends CronObject
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
-
+        
          $doc_state = $result['data']['doc_state'];
          $state_code = $result['data']['doc_state_code'];
-         $doc_amount = $result['data']['doc_amount'];
+         $doc_amount = isset($result['data']['doc_amount'])?$result['data']['doc_amount']:0;
          switch($doc_state){
             case 'warning': 
 
-                if($state_code==2 && $order_data->getStatus() == $this->subiekt_api_order_status){
-                  $this->setStatus($result['data']['message'],$this->subiekt_api_order_processing);
+                if($state_code==2 &&  $st == $this->subiekt_api_order_status){
+                  $this->setStatus($id_order,$result['data']['message'],$this->subiekt_api_order_processing);
                   print("Warning: {$result['data']['message']}\n");
-                }elseif($state_code==1 && $order_data->getStatus() == $this->subiekt_api_order_status ){
+                }elseif($state_code==1 &&  $st == $this->subiekt_api_order_status ){
                      //TODO:DELETE order reference and try again send order ?                                    
-                     $this->addErrorLog($result['data']['message']);
+                     $this->addErrorLog($id_order,$result['data']['message']);
                      print("Warning: {$result['data']['message']}\n");
 
                 } 
