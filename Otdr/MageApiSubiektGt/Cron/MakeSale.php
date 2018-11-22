@@ -58,6 +58,13 @@ class MakeSale extends CronObject
             continue;
          }
          
+         //Magento order have shipping or invoice status ?
+         if(!$order_data->hasInvoices() && !$order_data->hasShipments()){
+             $this->unlockOrder($id_order);
+             print ("skipped no invoice or shippment\n");
+             continue;
+         }
+         
 
          $order_json[$id_order] = array('order_ref'=>$order['gt_order_ref']);
 
@@ -100,7 +107,6 @@ class MakeSale extends CronObject
 
             case 'ok':  
                   //If status OK
-
                   $this->updateOrderStatus($id_order,$result['data']);   
 
                   print("OK - Send!");
