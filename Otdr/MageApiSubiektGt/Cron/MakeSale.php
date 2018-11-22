@@ -90,10 +90,11 @@ class MakeSale extends CronObject
          $doc_state = $result['data']['doc_state'];
          $state_code = $result['data']['doc_state_code'];
          $doc_amount = isset($result['data']['doc_amount'])?$result['data']['doc_amount']:0;
+
          switch($doc_state){
             case 'warning': 
-
-                if($state_code==2 &&  $st == $this->subiekt_api_order_status){
+                  
+                if($state_code==2 &&  ($st == $this->subiekt_api_order_status || $st == 'processing')){
                   $this->setStatus($id_order,$result['data']['message'],$this->subiekt_api_order_processing);
                   print("Warning: {$result['data']['message']}\n");
                 }elseif($state_code==1 &&  $st == $this->subiekt_api_order_status ){
