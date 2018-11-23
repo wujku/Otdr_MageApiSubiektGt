@@ -19,14 +19,14 @@ class SubiektApi
     /**
      * Call request to api  
      */
-    public function call($method, $args=array(), $timeout = 60){
-        return $this->makeRequest($method, $args, $timeout);
+    public function call($method, $args=array(),$debug = false, $timeout = 60){
+        return $this->makeRequest($method, $args,$debug, $timeout);
     }
 
     /**
      * Performs the underlying HTTP request. Not very exciting
      */
-    private function makeRequest($method, $args=array(), $timeout = 60){      
+    private function makeRequest($method, $args=array(),$debug = false, $timeout = 60){      
         $request_data['api_key'] = $this->api_key;
         $request_data['data'] = $args;
         $url = $this->api_endpoint.'/'.$method;
@@ -43,7 +43,9 @@ class SubiektApi
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request_data));
             $result = curl_exec($ch);
             $this->result  = $result;
-            //var_Dump($result);
+            if($debug == true){
+                var_Dump($result);
+            }
         } else {
             $json_data = json_encode($args);
             $result    = file_get_contents($url, null, stream_context_create(array(

@@ -16,6 +16,7 @@ abstract class CronObject {
    protected $subiekt_api_prefix = '';
    protected $subiekt_api_warehouse_id = 1;
    protected $subiekt_api_trans_symbol;
+   protected $subiekt_api_pdfs_path = '';
 
 
     /*Status*/
@@ -53,6 +54,7 @@ abstract class CronObject {
       $this->subiekt_api_prefix  =   $this->config->getGen('subiekt_api_prefix');
       $this->subiekt_api_warehouse_id = $this->config->getGen('subiekt_api_warehouse_id');
       $this->subiekt_api_trans_symbol = $this->config->getGen('subiekt_api_trans_symbol');
+      $this->subiekt_api_pdfs_path = $this->config->getGen('subiekt_api_pdfs_path');
 
       /*Statuses*/
       $this->subiekt_api_order_status = $this->config->getStatus('subiekt_api_order_status');
@@ -132,6 +134,35 @@ abstract class CronObject {
       $order->save();            
    }
 
+   /**
+   * Save pdf of selling document
+   */
+   protected function savePdf($id_order,$pdf_data, $file_name = ''){
+      if($file_name==''){
+        $file_name = md5($pdf_data).".pdf";
+      }
+      if(file_put_contents("{$this->subiekt_api_pdfs_path}/".$file_name, base64_encode($pdf_data))){
+          $connection = $this->resource->getConnection();
+          $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+          $dml = "UPDATE {$tableName} SET gt_sell_doc_pdf_request = 1, doc_file_pdf_name = '{$file_name}', upd_date = NOW() WHERE id_order = {$id_order}";
+          $connection->query($dml);
+      }else{
+        return false;
+      }
+      return $file_name;
+   }
+
+   /**
+   * Getting of pdf selling document
+   */
+   protected function getPdf($id_order,$in_base64 = false){
+      //file_
+   }
+
+
+   protected function deletePdf($id_order){
+    
+   }
 
    protected function createInvoice($id_order){
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
