@@ -138,14 +138,17 @@ abstract class CronObject {
    * Save pdf of selling document
    */
    protected function savePdf($id_order,$pdf_data, $file_name = ''){
+      $file_md5 = '';
       if($file_name==''){
-        $file_name = md5($pdf_data).".pdf";
+        $file_md5 = md5($pdf_data).
+        $file_name = $file_md5 .".pdf";
       }
-      if(file_put_contents("{$this->subiekt_api_pdfs_path}/".$file_name, base64_encode($pdf_data))){
+      if(file_put_contents("{$this->subiekt_api_pdfs_path}/".$file_name, base64_decode($pdf_data))){
           $connection = $this->resource->getConnection();
           $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
           $dml = "UPDATE {$tableName} SET gt_sell_doc_pdf_request = 1, doc_file_pdf_name = '{$file_name}', upd_date = NOW() WHERE id_order = {$id_order}";
           $connection->query($dml);
+          //$this->addLog($id_order,'Zamówienie w wersji <a href="/otdr/pdf/view/file/'.$file_md5.'">PDF do pobrania</a>');
       }else{
         return false;
       }
