@@ -21,6 +21,7 @@ class OrderState extends CronObject
    }
 
    public function removeSellDoc($id_order){
+      $this->deletePdf($id_order);
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
       $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 0, gt_sell_doc_ref =  '', upd_date = NOW() WHERE id_order = {$id_order}";
@@ -46,6 +47,7 @@ class OrderState extends CronObject
    }
 
    public function removeFromDb($id_order){
+      $this->deletePdf($id_order);
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
       $dml = "DELETE FROM {$tableName}  WHERE id_order = {$id_order}";

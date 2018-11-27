@@ -108,13 +108,13 @@ class MakeSale extends CronObject
 
             case 'ok':  
                   
+                  //If status OK
+                  $this->updateOrderStatus($id_order,$result['data']);                  
                   //If responsed PDF document save it
                   if(isset($result['data']['doc_pdf'])){
                      //over write $result
                      $result['data']['doc_pdf_filename'] = $this->savePdf($id_order,$result['data']['doc_pdf']);
                   }
-                  //If status OK
-                  $this->updateOrderStatus($id_order,$result['data']);                  
                   print("OK - Send!");
 
                   if($doc_amount != $order_data->getGrandTotal()){                  

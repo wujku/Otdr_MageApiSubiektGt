@@ -138,17 +138,28 @@ abstract class CronObject {
    * Save pdf of selling document
    */
    protected function savePdf($id_order,$pdf_data, $file_name = ''){
-      $file_md5 = '';
-      if($file_name==''){
-        $file_md5 = md5($pdf_data).
-        $file_name = $file_md5 .".pdf";
+      $file_sha1 = '';
+      if($file_name==''){        
+        $file_name = sha1($pdf_data);
       }
-      if(file_put_contents("{$this->subiekt_api_pdfs_path}/".$file_name, base64_decode($pdf_data))){
+      if(file_put_contents("{$this->subiekt_api_pdfs_path}/".$file_name.'.pdf', base64_decode($pdf_data))){
           $connection = $this->resource->getConnection();
           $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
           $dml = "UPDATE {$tableName} SET gt_sell_doc_pdf_request = 1, doc_file_pdf_name = '{$file_name}', upd_date = NOW() WHERE id_order = {$id_order}";
           $connection->query($dml);
-          //$this->addLog($id_order,'Zamówienie w wersji <a href="/otdr/pdf/view/file/'.$file_md5.'">PDF do pobrania</a>');
+
+
+          //$this->appState->setAreaCode('adminhtml');
+          $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+          $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+          $baseUrl = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
+          $file_url  = $baseUrl.'otdrsgt/pdf/view/file/'.$file_name;
+
+          $comment_txt = 'Subiekt GT info: Dokument sprzedaży do zamówienia <strong>'.$id_order.'</strong>: <a  href="'.$file_url.'" target="_blank">PDF do pobrania</a>';
+          
+          $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order); 
+          $order->addStatusToHistory($this->subiekt_api_order_processing, $comment_txt, true);
+          $order->save();       
       }else{
         return false;
       }
@@ -164,7 +175,14 @@ abstract class CronObject {
 
 
    protected function deletePdf($id_order){
-    
+        $connection = $this->resource->getConnection();
+        $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = {$id_order}";
+        $result = $connection->fetchAll($query);        
+        if(isset($result[0]['doc_file_pdf_name']) && !empty($result[0]['doc_file_pdf_name'])){
+          return @unlink("{$this->subiekt_api_pdfs_path}/".$result[0]['doc_file_pdf_name'].'.pdf');
+        }
+        return false;
    }
 
    protected function createInvoice($id_order){

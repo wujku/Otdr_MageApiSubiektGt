@@ -24,12 +24,11 @@ class View extends \Magento\Framework\App\Action\Action{
 		if($file = $this->getRequest()->getParam('file')){
 			$pdfs_path = $this->config->getGen('subiekt_api_pdfs_path');
 
-			$file = $pdfs_path.'/'.$file.'.pdf';
-			
+			$file = $pdfs_path.'/'.$file.'.pdf';		
 			if(file_exists($file)){
-				//	header("Content-type:application/pdf");
-				//readfile($file);
-				echo file_get_contents($file);
+				header("Content-type:application/pdf");
+				readfile($file);
+				//echo file_get_contents($file);
 			}else{
 				print('Bad request');
 			}
