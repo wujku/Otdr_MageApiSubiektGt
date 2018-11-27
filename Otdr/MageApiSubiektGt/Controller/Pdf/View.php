@@ -27,10 +27,9 @@ class View extends \Magento\Framework\App\Action\Action{
 			$file = $pdfs_path.'/'.$file.'.pdf';		
 			if(file_exists($file)){
 				header("Content-type:application/pdf");
-				readfile($file);
-				//echo file_get_contents($file);
+				readfile($file);				
 			}else{
-				print('Bad request');
+				print('Dokument nie wygasł lub nie istnieje.');
 			}
 		}
 		exit;

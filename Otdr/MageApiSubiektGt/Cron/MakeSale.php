@@ -110,16 +110,16 @@ class MakeSale extends CronObject
                   
                   //If status OK
                   $this->updateOrderStatus($id_order,$result['data']);                  
-                  //If responsed PDF document save it
-                  if(isset($result['data']['doc_pdf'])){
-                     //over write $result
-                     $result['data']['doc_pdf_filename'] = $this->savePdf($id_order,$result['data']['doc_pdf']);
-                  }
+             
+
                   print("OK - Send!");
 
                   if($doc_amount != $order_data->getGrandTotal()){                  
                      $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: <b style=\"color:red;\">{$result['data']['order_ref']} : {$result['data']['doc_amount']}</b>"); 
                      print(" Warning: amount collision");
+                  }elseif(isset($result['data']['doc_pdf'])){
+                     //If responsed PDF document save it
+                     $result['data']['doc_pdf_filename'] = $this->savePdf($id_order,$result['data']['doc_pdf']);
                   }
                   print("\n");
 
