@@ -132,10 +132,5 @@ class MakeSale extends CronObject
 
 	}
 
-
-   public function getOrdersProcessed(){
-      return $this->ordersProcessed;
-   }
-
 }
 ?>

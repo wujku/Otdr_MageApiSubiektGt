@@ -235,10 +235,5 @@ class OrderState extends CronObject
       return true;
 
 	}
-
-   public function getOrdersProcessed(){
-      return $this->ordersProcessed;
-   }
-
 }
 ?>

@@ -174,9 +174,4 @@ class OrderSend extends CronObject
       return true;
    }
 
-
-
-   public function getOrdersProcessed(){
-      return $this->ordersProcessed;
-   }
 }
