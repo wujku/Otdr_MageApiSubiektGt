@@ -153,7 +153,7 @@ abstract class CronObject {
           $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
           $baseUrl = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
           $file_url  = $baseUrl.'otdrsgt/pdf/view/file/'.$file_name;
-          var_dump($file_url);
+          //var_dump($file_url);
           $comment_txt = 'Subiekt GT info: Dokument sprzedaży do zamówienia <strong>'.$id_order.'</strong>: <a  href="'.$file_url.'" target="_blank">PDF do pobrania</a>';
                  
           $order = $objectManager->create('\Magento\Sales\Api\Data\OrderInterface')->loadByIncrementId($id_order);       
