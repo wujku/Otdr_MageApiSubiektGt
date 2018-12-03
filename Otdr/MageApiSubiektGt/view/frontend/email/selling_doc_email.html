@@ -1,0 +1,6 @@
+
+<!--@subject {{trans "%name Twój rachunek  do zamówienia %order_id" name=$order.customer_firstname order_id=$order.increment_id}}  @-->
+{{template config_path="design/email/header_template"}}
+<p>Witaj {{trans "%name" name=$order.customer_firstname}},</p>
+<p>w załączniku przesyłamy dokument sprzedaży do zamówienia <b>{{var order.increment_id}}<b>.</p>
+{{template config_path="design/email/footer_template"}}

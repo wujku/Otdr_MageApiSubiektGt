@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+ <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:Magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="mageapisubiektgt_doc_email" label="Email z dokumentem sprzedaży dla klientów" file="selling_doc_email.html" type="html" module="Otdr_MageApiSubiektGt" area="frontend"/>
+</config>

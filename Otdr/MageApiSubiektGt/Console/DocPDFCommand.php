@@ -19,7 +19,7 @@ class DocPDFCommand extends Command
    protected function configure()
    {
        $this->setName('mageapisubiektgt:docpdf');
-       $this->setDescription('Pobranie dokumentów sprzedaży jako PDF');           
+       $this->setDescription('Pobranie dokumentów sprzedaży jako PDF z SubiektaGt');           
        parent::configure();
    }
    protected function execute(InputInterface $input, OutputInterface $output)

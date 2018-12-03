@@ -19,7 +19,7 @@ class OrderSendCommand extends Command
    protected function configure()
    {
        $this->setName('mageapisubiektgt:sendorders');
-       $this->setDescription('Eksport zamówień do Subiekta GT poprzez API Wrapper');           
+       $this->setDescription('Eksport zamówień do Subiekta GT');           
        parent::configure();
    }
    protected function execute(InputInterface $input, OutputInterface $output)

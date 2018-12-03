@@ -27,6 +27,13 @@
            </argument>
        </arguments>
    </type> 
+   <type name="Magento\Framework\Console\CommandList">
+       <arguments>
+              <argument name="commands" xsi:type="array">              
+               <item name="mageapisubiektgtDocEmail" xsi:type="object">Otdr\MageApiSubiektGt\Console\DocEmailCommand</item>
+           </argument>
+       </arguments>
+   </type>   
    <type name="Otdr\MageApiSubiektGt\Helper\Config">
    		<arguments>
    			<argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>

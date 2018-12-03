@@ -184,10 +184,22 @@ abstract class CronObject {
    /**
    * Getting of pdf selling document
    */
+   
    protected function getPdf($id_order,$in_base64 = false){
-      //file_
+        $connection = $this->resource->getConnection();
+        $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = {$id_order}";
+        $result = $connection->fetchAll($query);        
+        if(isset($result[0]['doc_file_pdf_name']) && !empty($result[0]['doc_file_pdf_name'])){
+          $pdf_content = file_get_contents($this->getDirForPDF($this->subiekt_api_pdfs_path,$result[0]['doc_file_pdf_name']).'/'.$result[0]['doc_file_pdf_name'].'.pdf');
+          if($in_base64){
+            $pdf_content = base64_encode($pdf_content);
+          }          
+          return $pdf_content;
+        
+        }  
+        return false;
    }
-
 
    protected function deletePdf($id_order){
         $connection = $this->resource->getConnection();
