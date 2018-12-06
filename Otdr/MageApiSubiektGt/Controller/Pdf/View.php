@@ -29,7 +29,7 @@ class View extends \Magento\Framework\App\Action\Action{
 				header("Content-type:application/pdf");
 				readfile($file);				
 			}else{
-				print('Dokument nie wygasł lub nie istnieje.');
+				print('Dokument wygasł lub nie istnieje.');
 			}
 		}
 		exit;

@@ -160,12 +160,17 @@ class OrderSend extends CronObject
          /* Update products qty on magento */
          $result = $subiektApi->call('product/getqtysbycode',array('products_qtys'=>$order_json[$id_order]['products']));             
          if($result['state'] == 'success'){
+            $product_log = "<br/>Status produktów:\n<br/>";
             foreach($result['data'] as $ean13 => $pd){                      
                if(is_array($pd)){          
-               //TODO: sprawdzic czy produkt jest produktem  zpółki wirtualnej czy z magazynu        
+                  //TODO: dodać log ile jest na stanie produktów.                    
                   $this->productQtyUpdate($ean13,$pd['available']);
+                  if($this->subiekt_api_trans_symbol != $ean13){
+                     $product_log .= "{$ean13}:".($pd['available']>0?"<b style=\"color:green;\">{$pd['available']}</b>":"<b style=\"color:red;\">{$pd['available']}</b>")."\n<br/>";
+                  }
                }
             }
+            $this->addLog($id_order,$product_log);
          } 
          print("OK\n");
                

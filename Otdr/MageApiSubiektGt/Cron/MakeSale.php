@@ -89,6 +89,7 @@ class MakeSale extends CronObject
         
          $doc_state = $result['data']['doc_state'];
          $state_code = $result['data']['doc_state_code'];
+         $doc_ref =  $result['data']['doc_ref'];
          $doc_amount = isset($result['data']['doc_amount'])?$result['data']['doc_amount']:0;
 
          switch($doc_state){
@@ -110,7 +111,14 @@ class MakeSale extends CronObject
                   
                   //If status OK
                   $this->updateOrderStatus($id_order,$result['data']);                  
-             
+                  //TODO: ustawić flage Do wysyłki na subiekcie.      
+                  //var_dump($this->subiekt_api_wrapping_flag);  
+                  if(!empty($this->subiekt_api_wrapping_flag)){
+                    $flag_result = $subiektApi->call('document/setflag',array('doc_ref'=>$doc_ref,
+                                                                              'id_gr_flag' => 6,
+                                                                              'flag_name'=>$this->subiekt_api_wrapping_flag
+                                                                             ));   
+                  }
 
                   print("OK - Send!");
 

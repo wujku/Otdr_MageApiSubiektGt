@@ -30,6 +30,7 @@ class MakeSaleCommand extends Command
             $output->writeln('Processed sale: '.$this->makeSale->getOrdersProcessed());
         }else{
             $output->writeln('Processing ERROR.');
+            $output->writeln($this->makeSale->getLog());
         }
    }
 

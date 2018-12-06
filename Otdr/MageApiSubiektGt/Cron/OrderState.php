@@ -56,6 +56,42 @@ class OrderState extends CronObject
    }
 
 
+   protected function makeShippment($orderObject){      
+      if ($orderObject->canShip()) {
+         $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+          // Initialize the order shipment object
+          $convertOrder = $objectManager->create('Magento\Sales\Model\Convert\Order');
+          $shipment = $convertOrder->toShipment($orderObject);
+          // Loop through order items
+          foreach ($orderObject->getAllItems() AS $orderItem) {
+              // Check if order item has qty to ship or is virtual
+              if (! $orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
+                  continue;
+              }
+              $qtyShipped = $orderItem->getQtyToShip();
+              // Create shipment item with qty
+              $shipmentItem = $convertOrder->itemToShipmentItem($orderItem)->setQty($qtyShipped);
+              // Add shipment item to shipment
+              $shipment->addItem($shipmentItem);
+          }
+
+          // Register shipment
+          $shipment->register();
+          $shipment->getOrder()->setIsInProcess(true);
+
+          try {
+              // Save created shipment and order
+              $shipment->save();
+              $shipment->getOrder()->save();
+
+          } catch (\Exception $e) {
+             echo "Shipment Not Created". $e->getMessage(); 
+             return false;
+          }
+      }
+       return true;
+   }
+
 	public function execute(){
           	
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);
@@ -83,7 +119,7 @@ class OrderState extends CronObject
          /*Request for sale document*/
          $resut = false;
          if($order['gt_order_sent'] == 1 && $order['gt_sell_doc_request'] == 1 ){
-            $result = $subiektApi->call('document/getstate',array('doc_ref'=>$order['gt_sell_doc_ref'])); 
+            $result = $subiektApi->call('document/getstate',array('doc_ref'=>$order['gt_sell_doc_ref']),true); 
          }
          /*Request for order*/
          elseif($order['gt_order_sent'] == 1){
@@ -125,6 +161,16 @@ class OrderState extends CronObject
                            $continue  = true;
                      }
                      break;
+                  //Make shippment
+                  case $this->subiekt_api_sell_doc_status:
+                     
+                     if(!$order_data->hasShipments() && !empty($this->subiekt_api_complete_flag)){
+                        if($result['flag_name'] ==  $this->subiekt_api_complete_flag){
+                           $this->makeShippment($order_data);
+                        }
+                     }
+                  
+                  break;
                   default: break;
                } 
            
@@ -164,9 +210,12 @@ class OrderState extends CronObject
                               if($p_result['state']=='success'){
                                  $make_sale = true;
                                  $r_products = $p_result['data'];
-                                 foreach($r_products as $rp){                                    
-                                    $make_sale = $make_sale AND $rp['on_store'];                                    
-                                 }
+                                 foreach($r_products as $rp){                                                                    
+                                    if(intval($rp['on_store'])==0){
+                                       $make_sale = false;
+                                       break;
+                                    }                                                                        
+                                 }                                 
                                  if($make_sale){
                                     //Products on store make sell doc
                                     $this->setStatus($id_order,"Wznowiono realizacje",$this->subiekt_api_order_status);
@@ -178,7 +227,7 @@ class OrderState extends CronObject
                         
                   break;
                   //order registred but subiekt processing
-                  case $this->subiekt_api_order_status :
+                  case $this->subiekt_api_order_status :                     
                         if($result['state'] == 7 && $result['order_processing']==true){
                            $continue = true;
                         }

@@ -26,7 +26,8 @@ abstract class CronObject {
    protected $subiekt_api_order_hold = '';
 
    /*Flags*/
-   protected $subiekt_api_wrapping_id_flag = 0;
+   protected $subiekt_api_wrapping_flag = 0;
+   protected $subiekt_api_complete_flag = 0;
 
    
    protected $resource = false;
@@ -62,7 +63,9 @@ abstract class CronObject {
       $this->subiekt_api_order_processing = $this->config->getStatus('subiekt_api_order_processing');
       $this->subiekt_api_order_hold = $this->config->getStatus('subiekt_api_order_hold');
       
-      /*Flags*/
+      /*Flags*/      
+      $this->subiekt_api_wrapping_flag = $this->config->getStatus('subiekt_api_wrapping_flag');
+      $this->subiekt_api_complete_flag = $this->config->getStatus('subiekt_api_complete_flag');
       
    }
 
