@@ -4,9 +4,17 @@
         <job name="sendorders" instance="Otdr\MageApiSubiektGt\Cron\OrderSend" method="execute">
             <schedule>*/5 * * * *</schedule>
         </job>
-
         <job name="makesale" instance="Otdr\MageApiSubiektGt\Cron\MakeSale" method="execute">
             <schedule>*/5 7-13 * * *</schedule>
-        </job>        
+        </job>  
+        <job name="orderstate" instance="Otdr\MageApiSubiektGt\Cron\OrderState" method="execute">
+            <schedule>*/10 7-16 * * *</schedule>
+        </job>  
+        <job name="docpdf" instance="Otdr\MageApiSubiektGt\Cron\DocPDF" method="execute">
+            <schedule>*/10 13-16 * * *</schedule>
+        </job> 
+        <job name="docemail" instance="Otdr\MageApiSubiektGt\Cron\DocEmail" method="execute">
+            <schedule>*/15 15-17 * * *</schedule>
+        </job>                  
     </group>
 </config>

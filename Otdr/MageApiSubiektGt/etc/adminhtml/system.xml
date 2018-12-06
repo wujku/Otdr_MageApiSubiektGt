@@ -72,11 +72,15 @@
                      <comment>Zmień na status gdy wystąpi błąd w komunikacji lub danych zamówienia.</comment> 
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
                 </field>           
-        <field id="subiekt_api_wrapinng_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Flaga 1</label>
-                    <comment>ID flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>            
+        <field id="subiekt_api_wrapping_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Flaga do spakowania</label>
+                    <comment>Nazwa flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>            
                 </field>                
-                                                          
+ <field id="subiekt_api_complete_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Flaga zrealizowane</label>
+                    <comment>Nazwa flagi SubiektaGT oznaczającą, że zamówienie zostało zrealizowane</comment>            
+                </field>                
+                                                                                  
             </group>
         </section>
     </system>
