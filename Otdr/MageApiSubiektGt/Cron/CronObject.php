@@ -66,8 +66,11 @@ abstract class CronObject {
       /*Flags*/      
       $this->subiekt_api_wrapping_flag = $this->config->getStatus('subiekt_api_wrapping_flag');
       $this->subiekt_api_complete_flag = $this->config->getStatus('subiekt_api_complete_flag');
+
+
       
    }
+
 
    public function getLog(){
       return $this->logArray;
@@ -166,6 +169,18 @@ abstract class CronObject {
         return false;
       }
       return $file_name;
+   }
+
+
+
+   protected function createOrder($id_order){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
+      $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+      $connection = $resource->getConnection();
+      $tableName = $resource->getTableName('otdr_mageapisubiektgt');
+
+      $dml = 'INSERT INTO '.$tableName.' VALUES(0,\''.$id_order.'\',0,0,0,0,\'\',\'\',\'\',NOW(),NOW(),0)';
+      $connection->query($dml);
    }
 
 

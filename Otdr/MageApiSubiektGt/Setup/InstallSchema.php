@@ -104,10 +104,10 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 				$installer->getTable('otdr_mageapisubiektgt'),
 				$setup->getIdxName(
 					$installer->getTable('otdr_mageapisubiektgt'),
-					['id_order', 'gt_order_ref', 'is_locked', 'gt_order_sent', 'gt_sell_doc_sent','gt_sell_pdf_request','email_sell_pdf_sent'],
+					['id_order', 'gt_order_ref', 'is_locked', 'gt_order_sent', 'gt_sell_doc_sent','gt_sell_doc_pdf_request','email_sell_pdf_sent'],
 					\Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_INDEX
 				),
-				['id_order', 'gt_order_ref', 'is_locked', 'gt_order_sent', 'gt_sell_doc_sent','gt_sell_pdf_request','email_sell_pdf_sent'],
+				['id_order', 'gt_order_ref', 'is_locked', 'gt_order_sent', 'gt_sell_doc_sent','gt_sell_doc_pdf_request','email_sell_pdf_sent'],
 				\Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_INDEX
 			);
 		}

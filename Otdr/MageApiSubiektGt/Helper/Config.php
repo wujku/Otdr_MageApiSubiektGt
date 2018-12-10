@@ -31,4 +31,32 @@ class Config
 		return $this->getConfigValue(self::XML_PATH .'statuses/'. $code);
 	}
 
+
+	public function getInternal($code){
+		return $this->getConfigValue(self::XML_PATH .'internal/'. $code);
+
+	}
+
+	public function get($code){		
+		return $this->getConfigValue(self::XML_PATH . $code);
+	}
+
+	public function getNonCached($code){
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');	
+
+		$connection = $resource->getConnection();
+        $tableName = $resource->getTableName('core_config_data');
+        $query = 	"select value from {$tableName} where path like '%{$code}%'";
+        $result = $connection->fetchAll($query);
+    
+        return $result[0]['value'];
+	}
+
+	public function save($varname,$value){
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+		$configWriter = $objectManager->get('\Magento\Framework\App\Config\Storage\WriterInterface');
+		$configWriter->save(self::XML_PATH.$varname,$value);		
+	}
+
 }
