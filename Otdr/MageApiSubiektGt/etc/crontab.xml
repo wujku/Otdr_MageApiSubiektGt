@@ -15,6 +15,9 @@
         </job> 
         <job name="docemail" instance="Otdr\MageApiSubiektGt\Cron\DocEmail" method="execute">
             <schedule>*/15 15-17 * * *</schedule>
+        </job>        
+        <job name="sendorders" instance="Otdr\MageApiSubiektGt\Cron\OrderSend" method="execute">
+            <schedule>*/5 * * * *</schedule>
         </job>                  
     </group>
 </config>

@@ -6,7 +6,7 @@ use Exception;
 
 class OrderManager extends CronObject{
 
-	protected $cfg;
+   protected $cfg;
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState ){
    	$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
@@ -18,7 +18,7 @@ class OrderManager extends CronObject{
          $connection = $this->resource->getConnection();
          $moduleTableName = $this->resource->getTableName('otdr_mageapisubiektgt');
          $salesOrderTable = $this->resource->getTableName('sales_order');
-         $query = "select increment_id from {$salesOrderTable}  WHERE increment_id NOT IN (SELECT id_order FROM {$moduleTableName}) AND created_at >= '{$date}'";
+         $query = "select increment_id from {$salesOrderTable}  WHERE increment_id NOT IN (SELECT id_order FROM {$moduleTableName} WHERE add_date >='{$date}' ) AND created_at >= '{$date}'";
          $result = $connection->fetchAll($query);
          return $result;
    }
