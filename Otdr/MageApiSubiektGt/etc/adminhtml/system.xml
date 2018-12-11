@@ -82,6 +82,13 @@
                 </field>                
                                                                                   
             </group>
-        </section>
+        <group id="internal" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">  
+        <label>Parametry wewnętrzne</label>  
+         <field id="last_order_date" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                     <label>Data zamówienia</label>
+                     <comment>Data od której zostały prztworzone zamówienia i wysłąne do subiekta.</comment>                      
+                </field>
+        </group>              
+        </section>       
     </system>
 </config>
