@@ -26,7 +26,7 @@ class OrderManager extends CronObject{
 	public function execute(){
 		$last_order_date = NULL;				
 		if(is_null($last_order_date = $this->cfg->getNonCached('internal/last_order_date'))){
-			echo "Brak ustaionego czasu pobrania ostatniego zamówienia\n";
+			echo "Brak ustwionego czasu pobrania ostatniego zamówienia\n";
 			return false;
 		}
 		echo "Pobieram dane od: {$last_order_date}\n";

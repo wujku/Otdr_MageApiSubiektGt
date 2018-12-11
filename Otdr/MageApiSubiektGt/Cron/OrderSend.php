@@ -76,7 +76,7 @@ class OrderSend extends CronObject
                            'amount' =>$payment['amount_ordered'],
                            'reference' =>  trim($this->subiekt_api_prefix.' '. $id_order),
                            'pay_type' => 'transfer',
-                           'comments' => trim('Doręczyciel: '.$shipping.', płatność: '.$payment['additional_information']['method_title'].". ".implode(" ",$comments))
+                           'comments' => trim('Doręczyciel: '.$shipping.', płatność: '.(isset($payment['additional_information']['method_title'])?$payment['additional_information']['method_title']:'').". ".implode(" ",$comments))
                            );
 
          

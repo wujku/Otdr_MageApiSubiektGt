@@ -49,8 +49,10 @@ class Config
         $tableName = $resource->getTableName('core_config_data');
         $query = 	"select value from {$tableName} where path like '%{$code}%'";
         $result = $connection->fetchAll($query);
-    
-        return $result[0]['value'];
+    	if(isset($result[0]['value'])){
+        	return $result[0]['value'];
+    	}
+    	return NULL;
 	}
 
 	public function save($varname,$value){
