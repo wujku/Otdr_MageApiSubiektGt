@@ -14,12 +14,12 @@
   "autoload": {
     "files": [
       "registration.php"
-    ],
+    ]
   },
   "repositories": [
     {
         "url": "https://github.com/LukeOtdr/Otdr_MageApiSubiektGt.git",
         "type": "git"
     }
-],
+  ],
 }
