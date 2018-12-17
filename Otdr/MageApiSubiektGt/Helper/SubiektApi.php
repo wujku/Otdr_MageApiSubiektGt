@@ -32,6 +32,9 @@ class SubiektApi
         $url = $this->api_endpoint.'/'.$method;
         
         if (function_exists('curl_init') && function_exists('curl_setopt')){
+            if($debug){
+                print_r($request_data);
+            }
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
@@ -44,7 +47,7 @@ class SubiektApi
             $result = curl_exec($ch);
             $this->result  = $result;
             if($debug == true){
-                var_Dump($result);
+                print_r($result);
             }
         } else {
             $json_data = json_encode($args);

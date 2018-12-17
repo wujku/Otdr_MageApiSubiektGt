@@ -76,7 +76,7 @@ class OrderSend extends CronObject
                            'amount' =>$payment['amount_ordered'],
                            'reference' =>  trim($this->subiekt_api_prefix.' '. $id_order),
                            'pay_type' => 'transfer',
-                           'comments' => trim('Doręczyciel: '.$shipping.', płatność: '.(isset($payment['additional_information']['method_title'])?$payment['additional_information']['method_title']:'').". ".implode(" ",$comments))
+                           'comments' => trim('Doręczyciel: '.$shipping.(isset($payment['additional_information']['method_title'])?', płatność: '.$payment['additional_information']['method_title']:'').". ".implode(" ",$comments))
                            );
 
          
@@ -104,15 +104,23 @@ class OrderSend extends CronObject
 
          $products_array = array(); 
          foreach($products as $product){
-            //var_Dump($product->getCustomAttribute('ean'));            
+            
             $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($product->getProductId());            
+
+            $code = $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$product->getSku();
+            if(empty($code)){
+               $code = $this->subiekt_api_prefix.$product->getId();
+            }
+
+
             $products_array[] =  array(
                                           'name'   =>                      $product->getName(),
                                           'price'  =>                      $product->getPrice()-$product->getDiscountAmount(),
-                                          'qty'    =>                      $product->getQtyOrdered(),
+                                          'qty'    =>                      intval($product->getQtyOrdered()),
                                           'price_before_discount' =>       $product->getPrice(),                                          
-                                          'code'   =>                      $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$product->getSku(),
+                                          'code'   =>                      $code,
                                           'time_of_delivery'   =>          2,
+                                          /*'supplier_code'    => '',*/
                                           'id_store' => $this->subiekt_api_warehouse_id
                                        );
          }

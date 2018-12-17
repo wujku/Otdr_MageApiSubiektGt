@@ -171,7 +171,22 @@ abstract class CronObject {
       return $file_name;
    }
 
-
+   protected getProcessingData($id_order,$field_name = null){
+      $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
+      $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+      $connection = $resource->getConnection();
+      $tableName = $resource->getTableName('otdr_mageapisubiektgt');
+      $query = "SELECT * FROM '.$tableName.' WHERE id_order={$id_order}";
+      $result = $connection->fetchAll($query);
+      if(count($result)==1){
+        if(is_null($field_name)){
+          return $result[0];
+        }elseif(isset($result[0][$field_name])){
+          return $result[0][$field_name];
+        }
+      }
+      return false;
+   }
 
    protected function createOrder($id_order){
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
