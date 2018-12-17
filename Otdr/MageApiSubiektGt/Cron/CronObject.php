@@ -171,7 +171,7 @@ abstract class CronObject {
       return $file_name;
    }
 
-   protected getProcessingData($id_order,$field_name = null){
+   protected function getProcessingData($id_order,$field_name = null){
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
       $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
       $connection = $resource->getConnection();
