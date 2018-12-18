@@ -119,7 +119,7 @@ class OrderState extends CronObject
          /*Request for sale document*/
          $resut = false;
          if($order['gt_order_sent'] == 1 && $order['gt_sell_doc_request'] == 1 ){
-            $result = $subiektApi->call('document/getstate',array('doc_ref'=>$order['gt_sell_doc_ref']),true); 
+            $result = $subiektApi->call('document/getstate',array('doc_ref'=>$order['gt_sell_doc_ref'])); 
          }
          /*Request for order*/
          elseif($order['gt_order_sent'] == 1){
