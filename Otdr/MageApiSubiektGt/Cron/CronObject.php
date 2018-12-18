@@ -176,7 +176,7 @@ abstract class CronObject {
       $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
       $connection = $resource->getConnection();
       $tableName = $resource->getTableName('otdr_mageapisubiektgt');
-      $query = "SELECT * FROM '.$tableName.' WHERE id_order={$id_order}";
+      $query = "SELECT * FROM {$tableName} WHERE id_order={$id_order}";
       $result = $connection->fetchAll($query);
       if(count($result)==1){
         if(is_null($field_name)){

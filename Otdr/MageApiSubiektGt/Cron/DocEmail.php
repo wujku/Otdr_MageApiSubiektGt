@@ -84,6 +84,13 @@ class DocEmail extends CronObject
          $this->ordersProcessed++;
          print("Prepare for sending selling document: \"{$id_order}\": ");
 
+         
+          //checking is processed by another
+         if(true == intval($this->getProcessingData($id_order,'email_sell_doc_pdf_sent'))){
+            print("skipped - processed\n");
+            continue;
+         }
+
          /* Locking order for processing */
          $this->lockOrder($id_order);
 

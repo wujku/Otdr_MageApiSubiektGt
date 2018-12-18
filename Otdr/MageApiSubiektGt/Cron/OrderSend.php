@@ -42,6 +42,11 @@ class OrderSend extends CronObject
          $this->ordersProcessed++;
          print("Sending order no \"{$order['id_order']}\": ");
          
+         //checking is processed by another
+         if(true == intval($this->getProcessingData($id_order,'gt_order_sent'))){
+            print("skipped - processed\n");
+            continue;
+         }
          /* Locking order for processing */
          $this->lockOrder($id_order);
          
