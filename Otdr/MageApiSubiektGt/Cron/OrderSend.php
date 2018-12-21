@@ -108,6 +108,8 @@ class OrderSend extends CronObject
          $products = $order_data->getAllItems();
 
          $products_array = array(); 
+
+         $taxHelper = $objectManager->get('\Magento\Catalog\Helper\Data');
          foreach($products as $product){
             
             $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($product->getProductId());            
@@ -117,14 +119,16 @@ class OrderSend extends CronObject
                $code = $this->subiekt_api_prefix.$product->getId();
             }
 
-
+            //var_dump($product->getPrice());
+            $price = $taxHelper->getTaxPrice($product, $product->getPrice(), true);
             $products_array[] =  array(
                                           'name'   =>                      $product->getName(),
-                                          'price'  =>                      $product->getPrice()-$product->getDiscountAmount(),
+                                          'price'  =>                      $price-$product->getDiscountAmount(),
                                           'qty'    =>                      intval($product->getQtyOrdered()),
-                                          'price_before_discount' =>       $product->getPrice(),                                          
+                                          'price_before_discount' =>       $price,                                          
                                           'code'   =>                      $code,
                                           'time_of_delivery'   =>          2,
+                                          //'net_price'          => true,
                                           /*'supplier_code'    => '',*/
                                           'id_store' => $this->subiekt_api_warehouse_id
                                        );

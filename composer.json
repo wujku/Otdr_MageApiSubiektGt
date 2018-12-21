@@ -2,7 +2,7 @@
   "name": "Otdr/MageApiSubiektGt",
   "description": "Magento 2 integracja z Subiektem GT poprzez Wrapper REST",
   "type": "magento2-module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT License",
   "authors": [
     {
