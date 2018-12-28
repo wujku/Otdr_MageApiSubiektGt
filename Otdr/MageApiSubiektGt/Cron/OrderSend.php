@@ -108,10 +108,11 @@ class OrderSend extends CronObject
          $products = $order_data->getAllItems();
 
          $products_array = array(); 
-
-         $taxHelper = $objectManager->get('\Magento\Catalog\Helper\Data');
+         
          foreach($products as $product){
-            
+   
+            if ($product->getParentItem()){continue;}
+
             $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($product->getProductId());            
 
             $code = $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$product->getSku();
@@ -119,9 +120,10 @@ class OrderSend extends CronObject
                $code = $this->subiekt_api_prefix.$product->getId();
             }
 
-            //var_dump($product->getPrice());
-            $price = $taxHelper->getTaxPrice($product, $product->getPrice(), true);
-            $products_array[] =  array(
+           //print_r($product->getProductType());
+            $price = $product->getPriceInclTax();
+            //if()
+            $products_array[$code] =  array(
                                           'name'   =>                      $product->getName(),
                                           'price'  =>                      $price-$product->getDiscountAmount(),
                                           'qty'    =>                      intval($product->getQtyOrdered()),
@@ -147,7 +149,7 @@ class OrderSend extends CronObject
                   'name' => 'Koszty wysyłki',
                   'id_store' => $this->subiekt_api_warehouse_id,
             );
-            array_push($order_json[$id_order]['products'],$a_sp);
+            $order_json[$id_order]['products'][$this->subiekt_api_trans_symbol] = $a_sp;
          }
          
                   

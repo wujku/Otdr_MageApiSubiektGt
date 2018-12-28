@@ -40,7 +40,14 @@
                <item name="mageapisubiektgtOrderManager" xsi:type="object">Otdr\MageApiSubiektGt\Console\OrderManagerCommand</item>
            </argument>
        </arguments>
-   </type>      
+   </type>  
+   <type name="Magento\Framework\Console\CommandList">
+       <arguments>
+              <argument name="commands" xsi:type="array">              
+               <item name="mageapisubiektgtProductList" xsi:type="object">Otdr\MageApiSubiektGt\Console\ProductListCommand</item>
+           </argument>
+       </arguments>
+   </type>         
    <type name="Otdr\MageApiSubiektGt\Helper\Config">
    		<arguments>
    			<argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>
