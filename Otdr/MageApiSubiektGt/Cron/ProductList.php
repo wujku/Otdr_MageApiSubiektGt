@@ -19,7 +19,7 @@ class ProductList extends CronObject
 			$full_json_array = array('timestamp'=>date('Y-m-d H:i:s'),'total'=>0,'products'=>array());
 			$onstore_json_array = array('timestamp'=>date('Y-m-d H:i:s'),'total'=>0,'products'=>array());	
 			foreach($products as $p){
-				$full_json_array['products'][$p['code']] = array('available'=>intval($p['available']),'supplier_reference'=>'','sku'=>$p['code'],'delivery_time_description'=>intval($p['available'])>0?'Wysyłamy w 24h':'Tymczasowo niedostępne','delivery_time'=>24);
+				$full_json_array['products'][$p['code']] = array('available'=>intval($p['available']),'supplier_reference'=>'','sku'=>$p['code'],'delivery_time_description'=>intval($p['available'])>0?'Wysyłamy w 24h':'Tymczasowo niedostępne','delivery_time'=>intval($p['available'])>0?24:0);
 				if(intval($p['available'])>0){
 					$onstore_json_array['products'][$p['code']] = $full_json_array['products'][$p['code']];					
 				}				
