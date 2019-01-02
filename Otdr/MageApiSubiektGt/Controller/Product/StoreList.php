@@ -26,9 +26,9 @@ class StoreList extends \Magento\Framework\App\Action\Action{
 		$type = $this->getRequest()->getParam('type');
 		$delete = intval($this->getRequest()->getParam('delete'));
 		$forcedelete = intval($this->getRequest()->getParam('forcedelete'));
-		$file_name = dirname(__FILE__).'/fullstoreproducts.php';
+		$file_name = dirname(__FILE__).'/fullstoreproducts.data';
 		if($type == 'available'){
-			$file_name = dirname(__FILE__).'/onstoreproducts.php';
+			$file_name = dirname(__FILE__).'/onstoreproducts.data';
 		}
 		
 		if($forcedelete && file_exists($file_name)){

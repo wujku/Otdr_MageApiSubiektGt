@@ -19,18 +19,17 @@ class ProductList extends CronObject
 			$full_json_array = array('timestamp'=>date('Y-m-d H:i:s'),'total'=>0,'products'=>array());
 			$onstore_json_array = array('timestamp'=>date('Y-m-d H:i:s'),'total'=>0,'products'=>array());	
 			foreach($products as $p){
-				$full_json_array['products'][$p['code']] = array('available'=>intval($p['available']),'status_description'=>intval($p['available'])>0?'Wysyłamy w 24h':'Tymczasowo niedostępne','sku'=>$p['code'],'supplier_reference'=>$p['code']);
+				$full_json_array['products'][$p['code']] = array('available'=>intval($p['available']),'supplier_reference'=>'','sku'=>$p['code'],'delivery_time_description'=>intval($p['available'])>0?'Wysyłamy w 24h':'Tymczasowo niedostępne','delivery_time'=>24);
 				if(intval($p['available'])>0){
-					$onstore_json_array['products'][$p['code']] = $full_json_array['products'][$p['code']];
-					
+					$onstore_json_array['products'][$p['code']] = $full_json_array['products'][$p['code']];					
 				}				
 			}
 			$full_json_array['total'] = count($full_json_array['products']);
 			$onstore_json_array['total'] = count($onstore_json_array['products']);
 			//print_r($json_array);
-			$file_name = dirname(__FILE__).'/../Controller/Product/fullstoreproducts.php';
+			$file_name = dirname(__FILE__).'/../Controller/Product/fullstoreproducts.data';
 		 	file_put_contents($file_name,serialize($full_json_array));
-			$file_name = dirname(__FILE__).'/../Controller/Product/onstoreproducts.php';
+			$file_name = dirname(__FILE__).'/../Controller/Product/onstoreproducts.data';
 		 	file_put_contents($file_name,serialize($onstore_json_array));
 
 
