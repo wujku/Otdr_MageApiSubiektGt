@@ -26,7 +26,7 @@ class ProductListCommand extends Command
    {        
         if($this->productList->execute()){
             $output->writeln('Processing OK.');
-            $output->writeln('Processed products: ');
+            $output->writeln('Processed products: '.$this->productList->count());
         }else{
             $output->writeln('Processing ERROR.');
         }
