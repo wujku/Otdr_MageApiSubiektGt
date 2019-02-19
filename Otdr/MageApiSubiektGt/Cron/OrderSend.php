@@ -144,8 +144,8 @@ class OrderSend extends CronObject
                   'ean'=>$this->subiekt_api_trans_symbol,                  
                   'code'=>$this->subiekt_api_trans_symbol,                  
                   'qty'=> 1,
-                  'price' => $order_data->getShippingAmount(),
-                  'price_before_discount' => $order_data->getShippingAmount(),
+                  'price' => $order_data->getShippingAmount()+$order_data->getPaymentSurchargeAmount(),
+                  'price_before_discount' => $order_data->getShippingAmount()+$order_data->getPaymentSurchargeAmount(),
                   'name' => 'Koszty wysyłki',
                   'id_store' => $this->subiekt_api_warehouse_id,
             );
