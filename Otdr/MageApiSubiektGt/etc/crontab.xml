@@ -19,7 +19,7 @@
         <job name="ordermanager" instance="Otdr\MageApiSubiektGt\Cron\OrderManager" method="execute">
             <schedule>*/5 * * * *</schedule>
         </job> 
-        <job name="productslist" instance="Otdr\MageApiSubiektGt\Cron\ProdictList" method="execute">
+        <job name="productslist" instance="Otdr\MageApiSubiektGt\Cron\ProductList" method="execute">
             <schedule>*/5 * * * *</schedule>
         </job>                             
     </group>
