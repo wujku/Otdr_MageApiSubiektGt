@@ -11,6 +11,7 @@ abstract class CronObject {
    protected $ordersProcessed = 0;
    protected $end_point = '';
    protected $api_key = '';
+   protected $enable = false;
    protected $subiekt_api_ean_attrib = '';
    protected $subiekt_api_newproducts = false;
    protected $subiekt_api_prefix = '';
@@ -48,6 +49,7 @@ abstract class CronObject {
       $this->resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 
       /* Load module configuration */
+      $this->enable = $this->config->getGen('enable');  
       $this->end_point = $this->config->getGen('subiekt_api_gateway');
       $this->api_key = $this->config->getGen('subiekt_api_key');      
       $this->subiekt_api_ean_attrib = $this->config->getGen('subiekt_api_ean_attrib'); 
@@ -71,6 +73,13 @@ abstract class CronObject {
       
    }
 
+
+  public function execute (){
+    if($this->enable == false){
+      print("Module is disabled - enable in admin panel!\n");   
+      exit();
+    }
+  }
 
    public function getLog(){
       return $this->logArray;

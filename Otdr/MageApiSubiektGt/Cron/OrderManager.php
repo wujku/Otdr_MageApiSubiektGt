@@ -24,6 +24,8 @@ class OrderManager extends CronObject{
    }
 
 	public function execute(){
+		parent::excute();
+
 		$last_order_date = NULL;				
 		if(is_null($last_order_date = $this->cfg->getNonCached('internal/last_order_date'))){
 			echo "Brak ustwionego czasu pobrania ostatniego zamówienia\n";

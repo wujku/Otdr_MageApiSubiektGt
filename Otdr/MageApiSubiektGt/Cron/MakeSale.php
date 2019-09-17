@@ -30,6 +30,8 @@ class MakeSale extends CronObject
    }
 
 	public function execute(){
+      
+      parent::excute();
           	
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);
       $orders_to_make_sale = $this->getOrdersIds();
