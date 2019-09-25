@@ -75,7 +75,7 @@ class DocEmail extends CronObject
 
    public function execute (){
       
-      parent::excute();
+        parent::execute();
 
       $orders_to_send_email = $this->getOrdersIds();
       

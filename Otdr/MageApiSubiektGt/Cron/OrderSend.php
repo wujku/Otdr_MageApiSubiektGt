@@ -32,7 +32,7 @@ class OrderSend extends CronObject
    public function execute()
    {
       
-      parent::excute();
+      parent::execute();
       
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);      
       $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 

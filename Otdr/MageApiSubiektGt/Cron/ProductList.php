@@ -14,7 +14,7 @@ class ProductList extends CronObject
    }
  
 	public function execute(){
-		parent::excute();
+		parent::execute();
 		
 		$subiektApi = new SubiektApi($this->api_key,$this->end_point); 
 		$result = $subiektApi->call('product/getlistbystore',array('id_store'=>$this->subiekt_api_warehouse_id));   
