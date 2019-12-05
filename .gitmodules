@@ -1,0 +1,3 @@
+[submodule "Otdr/ManufacFeeds"]
+	path = Otdr/ManufacFeeds
+	url = git@srvod.outdoorzy.pl:Luke/Otdr_ManufacFeeds.git

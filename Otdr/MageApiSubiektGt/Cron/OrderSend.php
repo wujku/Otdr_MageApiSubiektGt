@@ -70,12 +70,11 @@ class OrderSend extends CronObject
          $shipping = $order_data->getShippingDescription();   
          $comments_list =  $order_data->getAllStatusHistory();
          $comments = array();
-         foreach($comments_list as $comment){
-            if($comment->getData('is_visible_on_front') == 1){
-               $comments[] = $comment->getData('comment');
-            }
-            
+         foreach($comments_list as $comment){            
+               $comments[] = $comment->getData('comment');                     
          }
+         //if($count)
+         $comments = mb_substr(implode(" ",$comments),0,255);
          
          //TODO: setting 
          $order_json[$id_order] = array(
@@ -83,7 +82,7 @@ class OrderSend extends CronObject
                            'amount' =>$payment['amount_ordered'],
                            'reference' =>  trim($this->subiekt_api_prefix.' '. $id_order),
                            'pay_type' => 'transfer',
-                           'comments' => trim('Doręczyciel: '.$shipping.(isset($payment['additional_information']['method_title'])?', płatność: '.$payment['additional_information']['method_title']:'').". ".implode(" ",$comments))
+                           'comments' => trim('Doręczyciel: '.$shipping.(isset($payment['additional_information']['method_title'])?', płatność: '.$payment['additional_information']['method_title']:'').". ".$comments)
                            );
 
          
