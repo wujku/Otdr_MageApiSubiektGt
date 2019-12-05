@@ -29,6 +29,16 @@ class OrderSend extends CronObject
       $this->setStatus($id_order,'Zamówienie przesłane nr <b>'.$order_reference."</b>",$this->subiekt_api_order_status);      
    }
 
+
+   public function removeFromDb($id_order){
+      $this->deletePdf($id_order);
+      $connection = $this->resource->getConnection();
+      $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
+      $dml = "DELETE FROM {$tableName}  WHERE id_order = {$id_order}";
+      $connection->query($dml);
+      $this->addLog($id_order,'Całkowite usunięcie zamówienia z bazy');      
+   }
+
    public function execute()
    {
       
@@ -57,6 +67,12 @@ class OrderSend extends CronObject
          
          /* check order status */
          //var_dump($order_data->getStatus());
+         if($order_data->getStatus() == 'closed'){
+             $this->removeFromDb($id_order);
+             print("order closed - remove from processing\n");
+             continue;
+         }
+
          if($order_data->getStatus() != 'pending' && $order_data->getStatus() != 'pending_payment' && $order_data->getStatus() != 'processing'){
             $this->unlockOrder($id_order);
             print ("skipped\n");
