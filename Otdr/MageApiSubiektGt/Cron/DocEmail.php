@@ -68,7 +68,7 @@ class DocEmail extends CronObject
             ->addTo($orderObject->getCustomerEmail(), $orderObject->getCustomerFirstName())     
             ->addPdfAttachment($this->getPdf($orderObject->getIncrementId()),$orderObject->getIncrementId().'.pdf')       
             ->getTransport();        
-        return $transport->sendMessage();
+        $transport->sendMessage();
         
    }
 
@@ -109,17 +109,18 @@ class DocEmail extends CronObject
             continue;
          }
       
-         
-        if($this->sendEmail($order_data){ 
+        
+        try{ 
+          $this->sendEmail($order_data);
           $this->updateOrderStatus($id_order);
-        }else{
-           $this->unlockOrder($id_order); 
-           print "Not sent email!";
-           continue;
-        }
+        }catch(\Exception $e){
+          $this->unlockOrder($id_order); 
+          print "Email not send\n";
+          continue;
+        }  
+                          
         print "OK\n";
       }
-
       return true;
         
    }
