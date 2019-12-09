@@ -6,13 +6,16 @@ class MailTransportBuilder extends \Magento\Framework\Mail\Template\TransportBui
     public function addPdfAttachment($fileContent, $filename)
     {
         if ($fileContent) {
-            $this->message->createAttachment(
-                $fileContent,
-                'application/pdf',
-                \Zend_Mime::DISPOSITION_ATTACHMENT,
-                \Zend_Mime::ENCODING_BASE64,
-                $filename
-            );
+
+
+             $attachmentPart = new \Zend\Mime\Part();
+            $attachmentPart->setContent($fileContent)
+            ->setType(\Zend_Mime::TYPE_OCTETSTREAM)
+            ->setFileName($filename)
+            ->setEncoding(\Zend_Mime::ENCODING_BASE64) /*Add this*/
+            ->setDisposition(\Zend_Mime::DISPOSITION_ATTACHMENT);
+
+            $this->parts[] = $attachmentPart;
 
             return $this;
         }
@@ -21,15 +24,19 @@ class MailTransportBuilder extends \Magento\Framework\Mail\Template\TransportBui
     public function addImageAttachment($fileContent, $filename)
     {
         if ($fileContent) {
-            $this->message->createAttachment(
-                $fileContent,
-                \Zend_Mime::TYPE_OCTETSTREAM,
-                \Zend_Mime::DISPOSITION_ATTACHMENT,
-                \Zend_Mime::ENCODING_BASE64,
-                $filename
-            );
+
+            $attachmentPart = new \Zend\Mime\Part();
+            $attachmentPart->setContent($fileContent)
+            ->setType(\Zend_Mime::TYPE_OCTETSTREAM)
+            ->setFileName($filename)
+            ->setEncoding(\Zend_Mime::ENCODING_BASE64) /*Add this*/
+            ->setDisposition(\Zend_Mime::DISPOSITION_ATTACHMENT);
+
+            $this->parts[] = $attachmentPart;
 
             return $this;
+
+
         }
     }
 }
