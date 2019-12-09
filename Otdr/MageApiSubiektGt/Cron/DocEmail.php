@@ -110,8 +110,13 @@ class DocEmail extends CronObject
          }
       
          
-        $this->sendEmail($order_data); 
-        $this->updateOrderStatus($id_order);
+        if($this->sendEmail($order_data){ 
+          $this->updateOrderStatus($id_order);
+        }else{
+           $this->unlockOrder($id_order); 
+           print "Not sent email!";
+           continue;
+        }
         print "OK\n";
       }
 
