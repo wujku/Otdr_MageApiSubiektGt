@@ -152,16 +152,20 @@ class OrderState extends CronObject
                switch($status){
                   //delete order/document from subiekt
                   case 'canceled':  
-                     if(false !== $subiektApi->call('document/delete',array('doc_ref'=>$order['gt_sell_doc_ref'])) &&  false !==  $subiektApi->call('order/delete',array('order_ref'=>$order['gt_order_ref']))){                                          
-                           $this->removeFromDb($id_order);
-                           $continue  = true;
+                      if($result['fiscal_state'] == false){
+                         if(false !== $subiektApi->call('document/delete',array('doc_ref'=>$order['gt_sell_doc_ref'])) &&  false !==  $subiektApi->call('order/delete',array('order_ref'=>$order['gt_order_ref']))){                                          
+                               $this->removeFromDb($id_order);
+                               $continue  = true;
+                         }
                      }
                      break;
                   case 'closed':  
-                     if(false !== $subiektApi->call('document/delete',array('doc_ref'=>$order['gt_sell_doc_ref'])) &&  false !==  $subiektApi->call('order/delete',array('order_ref'=>$order['gt_order_ref']))){                                          
-                           $this->removeFromDb($id_order);
-                           $continue  = true;
-                     }
+                    if($result['fiscal_state'] == false){ 
+                       if(false !== $subiektApi->call('document/delete',array('doc_ref'=>$order['gt_sell_doc_ref'])) &&  false !==  $subiektApi->call('order/delete',array('order_ref'=>$order['gt_order_ref']))){                                          
+                             $this->removeFromDb($id_order);
+                             $continue  = true;
+                       }
+                      }
                      break;
                   //Make shippment
                   case $this->subiekt_api_sell_doc_status:
