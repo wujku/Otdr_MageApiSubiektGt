@@ -115,7 +115,7 @@ class OrderSend extends CronObject
                                                       'post_code'    => $customer['postcode'],
                                                       'phone'        => $customer['telephone'],
                                                       'ref_id'       => trim($this->subiekt_api_prefix.'CS '.$customer['entity_id']),
-                                                      'is_company'   => $customer['vat_is_valid']==true?true:false,
+                                                      'is_company'   => empty($customer['vat_id'])==false?false:true,
                                                       'company_name' => $customer['company'],
                                                       'tax_id'       => $customer['vat_id'],                                                      
                                              );
