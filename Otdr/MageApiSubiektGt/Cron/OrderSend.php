@@ -115,7 +115,7 @@ class OrderSend extends CronObject
                                                       'post_code'    => $customer['postcode'],
                                                       'phone'        => $customer['telephone'],
                                                       'ref_id'       => trim($this->subiekt_api_prefix.'CS '.$customer['entity_id']),
-                                                      'is_company'   => empty($customer['vat_id'])==false?false:true,
+                                                      'is_company'   => strlen($customer['vat_id'])>0?true:false,
                                                       'company_name' => $customer['company'],
                                                       'tax_id'       => $customer['vat_id'],                                                      
                                              );
@@ -169,7 +169,7 @@ class OrderSend extends CronObject
             $order_json[$id_order]['products'][$this->subiekt_api_trans_symbol] = $a_sp;
          }
          
-                  
+         //print_r($order_json[$id_order]);        
          /* Sending order data to SubiektGt API */         
          $result = $subiektApi->call('order/add',$order_json[$id_order]);                  
          if(!$result){             
