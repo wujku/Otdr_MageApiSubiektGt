@@ -54,8 +54,10 @@ class DocEmail extends CronObject
       $dataObject = new \Magento\Framework\DataObject();
       $dataObject->setData($orderObject->getData());
 
-      //$order = ;
-      //var_dump($orderObject->getData());
+
+      $id_order = $orderObject->getIncrementId();      
+      $pdf_raw = $this->getPdf($id_order);
+      
       $transport = $this->_transportBuilder->setTemplateIdentifier('mageapisubiektgt_doc_email')
             ->setTemplateOptions(['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID])
             ->setTemplateVars(
@@ -65,9 +67,21 @@ class DocEmail extends CronObject
                 ]
             )
             ->setFrom('general')                        
-            ->addTo($orderObject->getCustomerEmail(), $orderObject->getCustomerFirstName())     
-            ->addPdfAttachment($this->getPdf($orderObject->getIncrementId()),$orderObject->getIncrementId().'.pdf')       
-            ->getTransport();        
+            ->addTo($orderObject->getCustomerEmail(), $orderObject->getCustomerFirstName())                                   
+            ->getTransport();  
+        $attachment = $this->_transportBuilder->createPdfAttachment($pdf_raw,$id_order.'.pdf');  
+        
+        
+        $bodyMessage  = $transport->getMessage()->getBody();
+
+        //Mieszanie z załącznikiem
+        $bodyPart = new \Zend\Mime\Message();
+        $parts = $bodyMessage->getParts();
+        $parts[] = $attachment;
+        $bodyPart->setParts($parts);
+
+        $transport->getMessage()->setBody($bodyPart);
+        
         $transport->sendMessage();
         
    }
@@ -75,10 +89,11 @@ class DocEmail extends CronObject
 
    public function execute (){
       
-        parent::execute();
+      parent::execute();
+
 
       $orders_to_send_email = $this->getOrdersIds();
-      
+                
       
       foreach($orders_to_send_email as $order){
          $id_order = $order['id_order'];     
@@ -88,10 +103,10 @@ class DocEmail extends CronObject
 
          
           //checking is processed by another
-         if(true == intval($this->getProcessingData($id_order,'email_sell_doc_pdf_sent'))){
+        if(true == intval($this->getProcessingData($id_order,'email_sell_doc_pdf_sent'))){
             print("skipped - processed\n");
             continue;
-         }
+        }
 
          /* Locking order for processing */
          $this->lockOrder($id_order);
@@ -100,8 +115,8 @@ class DocEmail extends CronObject
          /*getting order data*/
          $order_data = $this->getOrderData($id_order);
          
-         /* check order status */
-         //var_dump($order_data->getStatus());
+         
+         /* check order status */         
          $st = $order_data->getStatus();
          if($st != 'complete'){
             $this->unlockOrder($id_order);
