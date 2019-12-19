@@ -32,7 +32,7 @@ class OrderState extends CronObject
    public function updateSellDoc($id_order,$doc_reference){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET gt_sell_doc_ref =  '{$doc_reference}', gt_sell_doc_pdf_request = 0, doc_file_pdf_name = '',  upd_date = NOW() WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1,gt_sell_doc_ref =  '{$doc_reference}', gt_sell_doc_pdf_request = 0, doc_file_pdf_name = '',  upd_date = NOW() WHERE id_order = {$id_order}";
       $connection->query($dml);
       $this->addLog($id_order,'Aktualizacja nr paragonu: <b>'.$doc_reference.'</b>');
 
@@ -144,8 +144,7 @@ class OrderState extends CronObject
          /*getting order data*/
          //analize only subiektgt state
          $result = $result['data'];     
-         $continue = false;    
-         //print_r($result);
+         $continue = false;      
          //checking by magento order status
          if($order['gt_order_sent'] == 1 && $order['gt_sell_doc_request'] == 1){              
                switch($status){
@@ -236,7 +235,17 @@ class OrderState extends CronObject
                         if($result['state'] == 7 && $result['order_processing']==true){
                            $continue = true;
                         }
-                  break; 
+                  break;
+
+                  case 'complete': 
+                           if($order['gt_sell_doc_request'] == 0){
+                            if($result['state'] == 8 && !empty($result['sell_doc'])){
+                                $this->updateSellDoc($id_order,$result['sell_doc']);
+                            }
+                          }
+
+                  break;
+
 
                   default: break;
                } 
