@@ -145,10 +145,9 @@ class OrderState extends CronObject
          //analize only subiektgt state
          $result = $result['data'];     
          $continue = false;    
-         //var_dump($result);
+         //print_r($result);
          //checking by magento order status
-         if($order['gt_order_sent'] == 1 && $order['gt_sell_doc_request'] == 1){
-            
+         if($order['gt_order_sent'] == 1 && $order['gt_sell_doc_request'] == 1){              
                switch($status){
                   //delete order/document from subiekt
                   case 'canceled':  
@@ -169,8 +168,8 @@ class OrderState extends CronObject
                      break;
                   //Make shippment
                   case $this->subiekt_api_sell_doc_status:
-                     
-                     if(!$order_data->hasShipments() && !empty($this->subiekt_api_complete_flag)){
+
+                     if(!$order_data->hasShipments() && !empty($this->subiekt_api_complete_flag)){                      
                         if($result['flag_name'] ==  $this->subiekt_api_complete_flag){
                            $this->makeShippment($order_data);
                         }

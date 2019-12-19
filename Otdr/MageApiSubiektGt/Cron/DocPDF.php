@@ -16,7 +16,7 @@ class DocPDF extends CronObject
    protected function getOrdersIds(){
          $connection = $this->resource->getConnection();
          $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-         $query = 'SELECT id_order,gt_order_ref FROM '.$tableName.' WHERE is_locked = 0 AND gt_sell_doc_pdf_request = 0 AND gt_sell_doc_request = 1';
+         $query = 'SELECT id_order,gt_sell_doc_ref FROM '.$tableName.' WHERE is_locked = 0 AND gt_sell_doc_pdf_request = 0 AND gt_sell_doc_request = 1';
          $result = $connection->fetchAll($query);
          return $result;
    }
@@ -53,14 +53,14 @@ class DocPDF extends CronObject
          /* check order status */
          //var_dump($order_data->getStatus());
          $st = $order_data->getStatus();
-         if($st != $this->subiekt_api_sell_doc_status && $st != 'processing'){
+         if($st != $this->subiekt_api_sell_doc_status && $st != 'processing' && $st != 'complete'){
             $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;
          }
 
 
-         $order_json[$id_order] = array('doc_ref'=>$order['gt_order_ref']);
+         $order_json[$id_order] = array('doc_ref'=>$order['gt_sell_doc_ref']);
 
          
          $result = $subiektApi->call('document/getpdf',$order_json[$id_order]);  

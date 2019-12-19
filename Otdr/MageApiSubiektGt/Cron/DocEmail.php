@@ -103,7 +103,8 @@ class DocEmail extends CronObject
 
          
           //checking is processed by another
-        if(true == intval($this->getProcessingData($id_order,'email_sell_doc_pdf_sent'))){
+      
+        if(1 == intval($this->getProcessingData($id_order,'email_sell_doc_pdf_sent'))){
             print("skipped - processed\n");
             continue;
         }
