@@ -165,6 +165,15 @@ class OrderState extends CronObject
                        }
                       }
                      break;
+                  case 'complete':                                                          
+                     if(!$order_data->hasShipments() && !empty($this->subiekt_api_complete_flag)){                      
+                        if($result['flag_name'] ==  $this->subiekt_api_complete_flag){
+                           $this->makeShippment($order_data);                           
+                        }
+                     }
+                     $continue = true;
+                  break;
+                     
                   //Make shippment
                   case $this->subiekt_api_sell_doc_status:
 
@@ -243,6 +252,7 @@ class OrderState extends CronObject
                                 $this->updateSellDoc($id_order,$result['sell_doc']);
                             }
                           }
+
 
                   break;
 
