@@ -95,7 +95,7 @@ class MakeSale extends CronObject
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
-        
+         
          $doc_state = $result['data']['doc_state'];
          $state_code = $result['data']['doc_state_code'];
          $doc_ref =  $result['data']['doc_ref'];
