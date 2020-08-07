@@ -60,9 +60,10 @@ class ProductList extends CronObject
 				}
 
 */				
-				$full_json_array[$this->store_info['code']]['products'][$p['code']] = intval($p['available']);
+				$code = trim($p['code']);
+				$full_json_array[$this->store_info['code']]['products'][$code] = intval($p['available']);
 				if(intval($p['available'])>0){
-					$onstore_json_array[$this->store_info['code']]['products'][$p['code']] = intval($p['available']);					
+					$onstore_json_array[$this->store_info['code']]['products'][$code] = intval($p['available']);					
 				}
 				
 				$cnt++; 				
