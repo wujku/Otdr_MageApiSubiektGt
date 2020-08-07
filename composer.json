@@ -1,5 +1,5 @@
 {
-  "name": "Otdr/MageApiSubiektGt",
+  "name": "LukeOtdr/Otdr_MageApiSubiektGt",
   "description": "Magento 2 integracja z Subiektem GT poprzez Wrapper REST",
   "type": "magento2-module",
   "version": "0.1.0",
