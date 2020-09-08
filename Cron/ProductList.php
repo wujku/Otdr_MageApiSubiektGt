@@ -53,6 +53,7 @@ class ProductList extends CronObject
 				$onstore_json_array = array('timestamp'=>date('Y-m-d H:i:s'));
 			}
 			$cnt = 0;
+			$onstore_json_array['products'][$code] = array();
 			foreach($products as $p){
 /*
 				if($p['available'] == 0 && isset($full_json_array['products'][$p['code']]) && $full_json_array['products'][$p['code']]['available']>0){
