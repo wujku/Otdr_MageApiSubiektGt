@@ -3,20 +3,21 @@ namespace Otdr\MageApiSubiektGt\Controller\Product;
 
 use \Exception;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Otdr\MageApiSubiektGt\Cron\CronObject;
 
 
-class PushList extends \Magento\Framework\App\Action\Action{
+class PushList extends \Magento\Framework\App\Action\Action implements HttpPostActionInterface {
 
 	protected $config;
-	
+
 
 	public function __construct(
 		\Magento\Framework\App\Action\Context $context,\Otdr\MageApiSubiektGt\Helper\Config $config
 
 		)
 	{
-		$this->config = $config;		
+		$this->config = $config;
 		return parent::__construct($context);
 	}
 
@@ -26,10 +27,10 @@ class PushList extends \Magento\Framework\App\Action\Action{
 		$json_response = array('state'=>'success');
 
 		$jsonStr = @file_get_contents("php://input");
-		$jsonStr = trim($jsonStr);		
+		$jsonStr = trim($jsonStr);
 		if($jsonStr!=NULL){
 			$json_request = json_decode($jsonStr,true);
-			if(json_last_error()>0){							
+			if(json_last_error()>0){
 				$json_response['state'] = 'fail';
 				$json_response['data'] = json_last_error_msg();
 				exit(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -54,7 +55,7 @@ class PushList extends \Magento\Framework\App\Action\Action{
 			$supplier_json_array = unserialize($supplier_data);
 		}
 
-		
+
 
 		if(file_exists($file_name_full)){
 			$data = file_get_contents($file_name_full);
@@ -85,7 +86,7 @@ class PushList extends \Magento\Framework\App\Action\Action{
 			}
 
 
-			if($qty>0){				
+			if($qty>0){
 				if(!isset($onstore_data[$supllier_code]['products'][$code])){
 					$onstore_data[$supllier_code]['products'][$code] = $qty;
 				}
