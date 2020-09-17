@@ -8,8 +8,7 @@ class MakeSale extends CronObject
 {
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState ){
-      parent::__construct($config,$logger,$appState);
-      $this->appState->setAreaCode('adminhtml');
+       parent::__construct($config,$logger,$appState);
    }
 
 
@@ -30,16 +29,16 @@ class MakeSale extends CronObject
    }
 
 	public function execute(){
-      
+
       parent::execute();
-          	
+
       $subiektApi = new SubiektApi($this->api_key,$this->end_point);
       $orders_to_make_sale = $this->getOrdersIds();
-      
-      
+
+
       foreach($orders_to_make_sale as $order){
-         $id_order = $order['id_order'];     
-      
+         $id_order = $order['id_order'];
+
          $this->ordersProcessed++;
          print("Making doc for order no \"{$order['id_order']}\": ");
 
@@ -53,86 +52,86 @@ class MakeSale extends CronObject
          /* Locking order for processing */
          $this->lockOrder($id_order);
          /*getting order data*/
-         
+
          $order_data = $this->getOrderData($id_order);
-         
+
          /* check order status */
          //var_dump($order_data->getStatus());
          $st = $order_data->getStatus();
-         if($st != $this->subiekt_api_order_status 
+         if($st != $this->subiekt_api_order_status
                && $st!=$this->subiekt_api_order_processing
                && $st != 'processing'){
             $this->unlockOrder($id_order);
             print ("skipped\n");
             continue;
          }
-         
+
          //Magento order have shipping or invoice status ?
          if(!$order_data->hasInvoices() && !$order_data->hasShipments()){
              $this->unlockOrder($id_order);
              print ("skipped no invoice or shippment\n");
              continue;
          }
-         
+
 
          $order_json[$id_order] = array('order_ref'=>$order['gt_order_ref'],'pdf_request'=>true);
 
-         
-         $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);  
-         
-         if(!$result){             
+
+         $result = $subiektApi->call('order/makesaledoc',$order_json[$id_order]);
+
+         if(!$result){
             $this->unlockOrder($id_order);
             $this->addErrorLog($id_order,'Can\'t connect to API check configuration!');
             return false;
 
          }
-         if($result['state'] == 'fail'){                        
+         if($result['state'] == 'fail'){
             $this->unlockOrder($id_order);
-            $this->addErrorLog($id_order,$result['message']);  
+            $this->addErrorLog($id_order,$result['message']);
             print("Error: {$result['message']}\n");
-            continue;          
-         }        
+            continue;
+         }
 
          /* unlocking order after processing */
          $this->unlockOrder($id_order);
-         
+
          $doc_state = $result['data']['doc_state'];
          $state_code = $result['data']['doc_state_code'];
          $doc_ref =  $result['data']['doc_ref'];
          $doc_amount = isset($result['data']['doc_amount'])?$result['data']['doc_amount']:0;
 
          switch($doc_state){
-            case 'warning': 
-                  
+            case 'warning':
+
                 if($state_code==2 &&  ($st == $this->subiekt_api_order_status || $st == 'processing')){
                   $this->setStatus($id_order,$result['data']['message'],$this->subiekt_api_order_processing);
                   print("Warning: {$result['data']['message']}\n");
                 }elseif($state_code==1 &&  $st == $this->subiekt_api_order_status ){
-                     //TODO:DELETE order reference and try again send order ?                                    
+                     //TODO:DELETE order reference and try again send order ?
                      $this->addErrorLog($id_order,$result['data']['message']);
                      print("Warning: {$result['data']['message']}\n");
 
-                } 
+                }
             break;
-            
 
-            case 'ok':  
-                  
+
+            case 'ok':
+
                   //If status OK
-                  $this->updateOrderStatus($id_order,$result['data']);                  
-                  //TODO: ustawić flage Do wysyłki na subiekcie.      
-                  //var_dump($this->subiekt_api_wrapping_flag);  
+                  $this->updateOrderStatus($id_order,$result['data']);
+                  //TODO: ustawić flage Do wysyłki na subiekcie.
+                  //var_dump($this->subiekt_api_wrapping_flag);
                   if(!empty($this->subiekt_api_wrapping_flag)){
                     $flag_result = $subiektApi->call('document/setflag',array('doc_ref'=>$doc_ref,
                                                                               'id_gr_flag' => 6,
                                                                               'flag_name'=>$this->subiekt_api_wrapping_flag
-                                                                             ));   
+                                                                             ));
                   }
 
                   print("OK - Send!");
 
-                  if($doc_amount != $order_data->getGrandTotal()){                  
-                     $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: <b style=\"color:red;\">{$result['data']['order_ref']} : {$result['data']['doc_amount']}</b>"); 
+                  if($doc_amount != $order_data->getGrandTotal()){
+                     $this->addErrorLog($id_order,"Niezgodność kwoty zamówień: <b style=\"color:red;\">{$result['data']['order_ref']} : {$result['data']['doc_amount']}</b>");
                      print(" Warning: amount collision");
                   }elseif(isset($result['data']['doc_pdf'])){
                      //If responsed PDF document save it
@@ -142,7 +141,7 @@ class MakeSale extends CronObject
 
             break;
          }
-            
+
       }
 
       return true;
