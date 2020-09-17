@@ -4,11 +4,12 @@ namespace Otdr\MageApiSubiektGt\Controller\Product;
 use \Exception;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Otdr\MageApiSubiektGt\Cron\CronObject;
 
 
-class PushDummy extends \Magento\Framework\App\Action\Action implements HttpPostActionInterface {
+class PushDummy extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface, HttpPostActionInterface {
 
     protected $config;
 
@@ -113,11 +114,26 @@ class PushDummy extends \Magento\Framework\App\Action\Action implements HttpPost
     {
         $token = $this->request->getParam("token");
 
+        var_dump($token);
         $configToken = $this->config->getGen("api_post_token");
+        var_dump($configToken);die;
 
         if((string) $token !== (string) $configToken) {
             return false;
         }
+        
+        return true;
 	}
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return new InvalidRequestException();
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
 }
 ?>
