@@ -114,14 +114,12 @@ class PushDummy extends \Magento\Framework\App\Action\Action implements CsrfAwar
     {
         $token = $this->request->getParam("token");
 
-        var_dump($token);
         $configToken = $this->config->getGen("api_post_token");
-        var_dump($configToken);die;
 
         if((string) $token !== (string) $configToken) {
             return false;
         }
-        
+
         return true;
 	}
 
