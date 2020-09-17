@@ -3,33 +3,45 @@ namespace Otdr\MageApiSubiektGt\Controller\Product;
 
 use \Exception;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\RequestInterface;
 use Otdr\MageApiSubiektGt\Cron\CronObject;
 
 
-class PushDummy extends \Magento\Framework\App\Action\Action{
+class PushDummy extends \Magento\Framework\App\Action\Action implements HttpPostActionInterface {
 
-	protected $config;
-	
+    protected $config;
+
+    protected $request;
 
 	public function __construct(
-		\Magento\Framework\App\Action\Context $context,\Otdr\MageApiSubiektGt\Helper\Config $config
-
+		\Magento\Framework\App\Action\Context $context,
+        RequestInterface $request,
+        \Otdr\MageApiSubiektGt\Helper\Config $config
 		)
 	{
-		$this->config = $config;		
+	    $this->request = $request;
+		$this->config = $config;
 		return parent::__construct($context);
 	}
 
-
 	public function execute()
 	{
+        if(!$this->validateToken()) {
+            $json_response = array(
+                'state' => 'fail',
+                'data' => 'Nieprawidłowy token autoryzacyjny'
+            );
+            exit(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+
 		$json_response = array('state'=>'success');
 
 		$jsonStr = @file_get_contents("php://input");
-		$jsonStr = trim($jsonStr);		
+		$jsonStr = trim($jsonStr);
 		if($jsonStr!=NULL){
 			$json_request = json_decode($jsonStr,true);
-			if(json_last_error()>0){							
+			if(json_last_error()>0){
 				$json_response['state'] = 'fail';
 				$json_response['data'] = json_last_error_msg();
 				exit(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -48,7 +60,7 @@ class PushDummy extends \Magento\Framework\App\Action\Action{
 
 		$file_name_full = dirname(__FILE__).'/dummy.data';
 
-		
+
 
 		if(file_exists($file_name_full)){
 			$data = file_get_contents($file_name_full);
@@ -69,7 +81,7 @@ class PushDummy extends \Magento\Framework\App\Action\Action{
 		$supllier_code = $json_data['code'];
 		$upd = 0;
 		$ins = 0;
-		
+
 		foreach($json_data['products'] as $code => $qty) {
 			if(!isset($full_data[$supllier_code]['products'][$code])){
 				$full_data[$supllier_code]['products'][$code] = $qty;
@@ -81,20 +93,31 @@ class PushDummy extends \Magento\Framework\App\Action\Action{
 
 		}
 		$full_data['timestamp'] = date('Y-m-d H:i:s');
-		
+
 		$full_data[$supllier_code]['total'] = count($full_data[$supllier_code]['products']);
-		
+
 		unset($json_data['products']);
 		$supplier_json_array[$supllier_code] =  $json_data;
-		
+
 		file_put_contents($file_name_full,serialize($full_data));
 		file_put_contents($suppliers, serialize($supplier_json_array));
-		
+
 
 		$json_response['data'] = array('updated'=>$upd,'inserted'=>$ins,'total'=>$full_data[$supllier_code]['total']);
 
 		print(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 		exit;
+	}
+
+    protected function validateToken()
+    {
+        $token = $this->request->getParam("token");
+
+        $configToken = $this->config->getGen("api_post_token");
+
+        if((string) $token !== (string) $configToken) {
+            return false;
+        }
 	}
 }
 ?>

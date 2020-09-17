@@ -15,80 +15,84 @@
                     <label>Aktywuj moduł</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="api_post_token" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Token autoryzacyjny dla akcji magento</label>
+                    <comment>Token autoryzacyjny</comment>
+                </field>
                 <field id="subiekt_api_gateway" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Adres bramki</label>
-                    <comment>Adres URL dostępu do REST API Subiekt GT.</comment>            
+                    <comment>Adres URL dostępu do REST API Subiekt GT.</comment>
                 </field>
                 <field id="subiekt_api_key" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>API klucz</label>
-                    <comment>Klucz dostępu do API.</comment>            
+                    <comment>Klucz dostępu do API.</comment>
                 </field>
                 <field id="subiekt_api_prefix" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Prefix</label>
-                    <comment>Prefix dla numerów zamówień w subiekcie.</comment>  
+                    <comment>Prefix dla numerów zamówień w subiekcie.</comment>
                 </field>
                 <field id="subiekt_api_trans_symbol" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Kod transportu</label>
-                    <comment>Kod usługi transportowej w subiekcie.</comment>  
-                </field>                                                  
+                    <comment>Kod usługi transportowej w subiekcie.</comment>
+                </field>
                 <field id="subiekt_api_warehouse_id" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Id Magazyn-u</label>
-                    <comment>ID magazynu dla którego mają być dokonowane rezerwacje.</comment>                      
-                </field>                                                                           
+                    <comment>ID magazynu dla którego mają być dokonowane rezerwacje.</comment>
+                </field>
                 <field id="subiekt_api_ean_attrib" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Ean</label>
-                     <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>             
-                </field>                 
+                     <comment>Podaj nazwę atrybutu porduktu przechowującego ean13</comment>
+                </field>
                 <field id="subiekt_api_newproducts" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Nowe produkty</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Automatycznie tworzyć nowe produkty w subiekcie.</comment> 
-                </field>  
+                    <comment>Automatycznie tworzyć nowe produkty w subiekcie.</comment>
+                </field>
                 <field id="subiekt_api_pdfs_path" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Ściezka PDF</label>
-                    <comment>Katalog do przechowywania dokumentów sprzedaży w formacie PDF.</comment>                      
-                </field> 
+                    <comment>Katalog do przechowywania dokumentów sprzedaży w formacie PDF.</comment>
+                </field>
 
             </group>
-        <group id="statuses" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">  
-        <label>Statusy</label>  
+        <group id="statuses" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+        <label>Statusy</label>
          <field id="subiekt_api_order_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status zamówienia</label>
-                     <comment>Zmień na status gdy zamówienie zostanie przekazane do subiekta.</comment> 
+                     <comment>Zmień na status gdy zamówienie zostanie przekazane do subiekta.</comment>
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field> 
+                </field>
                 <field id="subiekt_api_sell_doc_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status sprzedaży</label>
-                     <comment>Zmień na status gdy wygeneruje się PA lub FS i zostanie przkazane na magazyn.</comment> 
+                     <comment>Zmień na status gdy wygeneruje się PA lub FS i zostanie przkazane na magazyn.</comment>
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field>  
+                </field>
              <field id="subiekt_api_order_processing" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status przetwarzania</label>
-                     <comment>Zmień na status gdy oczekuje na towar od dostawcy.</comment> 
+                     <comment>Zmień na status gdy oczekuje na towar od dostawcy.</comment>
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field>        
+                </field>
                 <field id="subiekt_api_order_hold" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Status wstrzymania/błędu</label>
-                     <comment>Zmień na status gdy wystąpi błąd w komunikacji lub danych zamówienia.</comment> 
+                     <comment>Zmień na status gdy wystąpi błąd w komunikacji lub danych zamówienia.</comment>
                      <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
-                </field>           
+                </field>
         <field id="subiekt_api_wrapping_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Flaga do spakowania</label>
-                    <comment>Nazwa flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>            
-                </field>                
+                    <comment>Nazwa flagi SubiektaGT oznaczającą przekazanie zamówienia do spakowania</comment>
+                </field>
  <field id="subiekt_api_complete_flag" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Flaga zrealizowane</label>
-                    <comment>Nazwa flagi SubiektaGT oznaczającą, że zamówienie zostało zrealizowane</comment>            
-                </field>                
-                                                                                  
+                    <comment>Nazwa flagi SubiektaGT oznaczającą, że zamówienie zostało zrealizowane</comment>
+                </field>
+
             </group>
-        <group id="internal" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">  
-        <label>Parametry wewnętrzne</label>  
+        <group id="internal" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+        <label>Parametry wewnętrzne</label>
          <field id="last_order_date" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                      <label>Data zamówienia</label>
-                     <comment>Data od której zostały prztworzone zamówienia i wysłąne do subiekta.</comment>                      
+                     <comment>Data od której zostały prztworzone zamówienia i wysłąne do subiekta.</comment>
                 </field>
-        </group>              
-        </section>       
+        </group>
+        </section>
     </system>
 </config>
