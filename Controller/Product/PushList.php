@@ -4,11 +4,13 @@ namespace Otdr\MageApiSubiektGt\Controller\Product;
 use \Exception;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Otdr\MageApiSubiektGt\Cron\CronObject;
 
 
-class PushList extends \Magento\Framework\App\Action\Action implements HttpPostActionInterface {
+class PushList extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface, HttpPostActionInterface {
 
     protected $config;
 
@@ -132,6 +134,18 @@ class PushList extends \Magento\Framework\App\Action\Action implements HttpPostA
         if((string) $token !== (string) $configToken) {
             return false;
         }
+
+        return true;
+    }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return new InvalidRequestException();
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
     }
 }
 ?>
