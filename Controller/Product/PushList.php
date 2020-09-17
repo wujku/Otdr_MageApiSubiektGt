@@ -4,26 +4,38 @@ namespace Otdr\MageApiSubiektGt\Controller\Product;
 use \Exception;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\RequestInterface;
 use Otdr\MageApiSubiektGt\Cron\CronObject;
 
 
 class PushList extends \Magento\Framework\App\Action\Action implements HttpPostActionInterface {
 
-	protected $config;
+    protected $config;
 
+    protected $request;
 
-	public function __construct(
-		\Magento\Framework\App\Action\Context $context,\Otdr\MageApiSubiektGt\Helper\Config $config
-
-		)
-	{
-		$this->config = $config;
-		return parent::__construct($context);
-	}
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        RequestInterface $request,
+        \Otdr\MageApiSubiektGt\Helper\Config $config
+    )
+    {
+        $this->request = $request;
+        $this->config = $config;
+        return parent::__construct($context);
+    }
 
 
 	public function execute()
 	{
+        if(!$this->validateToken()) {
+            $json_response = array(
+                'state' => 'fail',
+                'data' => 'Nieprawidłowy token autoryzacyjny'
+            );
+            exit(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+
 		$json_response = array('state'=>'success');
 
 		$jsonStr = @file_get_contents("php://input");
@@ -110,5 +122,16 @@ class PushList extends \Magento\Framework\App\Action\Action implements HttpPostA
 		print(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 		exit;
 	}
+
+    protected function validateToken()
+    {
+        $token = $this->request->getParam("token");
+
+        $configToken = $this->config->getGen("api_post_token");
+
+        if((string) $token !== (string) $configToken) {
+            return false;
+        }
+    }
 }
 ?>
