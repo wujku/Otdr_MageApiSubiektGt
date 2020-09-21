@@ -27,6 +27,7 @@ class DocEmail extends CronObject
       $this->_transportBuilder = $transportBuilder;
       $this->_storeManager = $storeManager;
       parent::__construct($config,$logger,$appState);
+      $this->appState->setAreaCode('adminhtml');
    }
 
 
