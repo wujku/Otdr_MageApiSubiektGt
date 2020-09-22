@@ -9,6 +9,7 @@ class OrderState extends CronObject
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState ){
       parent::__construct($config,$logger,$appState);
+      $this->appState->setAreaCode('adminhtml');
    }
 
 
@@ -16,7 +17,7 @@ class OrderState extends CronObject
          $connection = $this->resource->getConnection();
          $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
          $query = 'SELECT id_order, gt_order_ref,gt_sell_doc_ref,gt_order_sent,gt_sell_doc_request,upd_date FROM '.$tableName.' WHERE gt_order_sent = 1 AND email_sell_doc_pdf_sent = 0 AND is_locked = 0';
-         $result = $connection->fetchAll($query);
+         $result = $connection->fetchAll($query);         
          return $result;
    }
 
@@ -62,6 +63,7 @@ class OrderState extends CronObject
           // Initialize the order shipment object
           $convertOrder = $objectManager->create('Magento\Sales\Model\Convert\Order');
           $shipment = $convertOrder->toShipment($orderObject);
+
           // Loop through order items
           foreach ($orderObject->getAllItems() AS $orderItem) {
               // Check if order item has qty to ship or is virtual
@@ -83,6 +85,10 @@ class OrderState extends CronObject
               // Save created shipment and order
               $shipment->save();
               $shipment->getOrder()->save();
+
+              // Send email
+              $objectManager->create('Magento\Shipping\Model\ShipmentNotifier')->notify($shipment);
+              $shipment->save();
 
           } catch (\Exception $e) {
              echo "Shipment Not Created". $e->getMessage(); 
