@@ -8,8 +8,7 @@ class OrderState extends CronObject
 {
 
    public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState ){
-      parent::__construct($config,$logger,$appState);
-      $this->appState->setAreaCode('adminhtml');
+      parent::__construct($config,$logger,$appState);      
    }
 
 
@@ -87,6 +86,7 @@ class OrderState extends CronObject
               $shipment->getOrder()->save();
 
               // Send email
+              $this->appState->setAreaCode('adminhtml');
               $objectManager->create('Magento\Shipping\Model\ShipmentNotifier')->notify($shipment);
               $shipment->save();
 
