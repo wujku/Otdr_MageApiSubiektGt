@@ -26,8 +26,7 @@ class DocEmail extends CronObject
     ){
       $this->_transportBuilder = $transportBuilder;
       $this->_storeManager = $storeManager;
-      parent::__construct($config,$logger,$appState);
-      $this->appState->setAreaCode('adminhtml');
+      parent::__construct($config,$logger,$appState);      
    }
 
 
@@ -51,6 +50,7 @@ class DocEmail extends CronObject
 
    protected function sendEmail($orderObject){
       $store = $this->_storeManager->getStore()->getId();
+      $this->appState->setAreaCode('adminhtml');
 
       $dataObject = new \Magento\Framework\DataObject();
       $dataObject->setData($orderObject->getData());
@@ -132,7 +132,7 @@ class DocEmail extends CronObject
           $this->updateOrderStatus($id_order);
         }catch(\Exception $e){
           $this->unlockOrder($id_order); 
-          print "Email not send\n";
+          print "Email not send\n$e\n";
           continue;
         }  
                           

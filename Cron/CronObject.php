@@ -43,8 +43,6 @@ abstract class CronObject {
       $this->config = $config;    
       $this->logger = $logger;  
       
-      /* Setting area of executing */
-     //$this->appState->setAreaCode('adminhtml');
 
       $this->resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 
