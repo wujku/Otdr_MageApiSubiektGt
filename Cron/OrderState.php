@@ -8,9 +8,12 @@ use Exception;
 class OrderState extends CronObject
 {
 
+    /* @var \Magento\Framework\App\AreaList */
+    protected $_areaList;
+
     public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState, \Magento\Framework\App\AreaList $areaList ){
         parent::__construct($config,$logger,$appState);
-        $areaList->getArea(Area::AREA_FRONTEND)->load(Area::PART_TRANSLATE);
+        $this->_areaList = $areaList;
     }
 
 
@@ -93,6 +96,8 @@ class OrderState extends CronObject
                 /* @var $shipmentNotifier \Magento\Shipping\Model\ShipmentNotifier */
                 $shipmentNotifier = $objectManager->create('Magento\Shipping\Model\ShipmentNotifier');
 
+                $this->_areaList->getArea(Area::AREA_FRONTEND)->load(Area::PART_TRANSLATE);
+                
                 $this->appState->emulateAreaCode(
                     Area::AREA_FRONTEND,
                     function () use ($shipmentNotifier, $shipment) {
