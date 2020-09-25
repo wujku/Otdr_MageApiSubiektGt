@@ -10,7 +10,7 @@ class OrderState extends CronObject
 
     public function __construct(\Otdr\MageApiSubiektGt\Helper\Config $config,\Psr\Log\LoggerInterface $logger, \Magento\Framework\App\State $appState, \Magento\Framework\App\AreaList $areaList ){
         parent::__construct($config,$logger,$appState);
-        $this->areaList->getArea(Area::AREA_FRONTEND)->load(Area::PART_TRANSLATE);
+        $areaList->getArea(Area::AREA_FRONTEND)->load(Area::PART_TRANSLATE);
     }
 
 
