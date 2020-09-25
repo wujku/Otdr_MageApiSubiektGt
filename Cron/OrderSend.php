@@ -148,7 +148,7 @@ class OrderSend extends CronObject
                                           'code'   =>                      $code,
                                           'time_of_delivery'   =>          2,
                                           //'net_price'          => true,
-                                          /*'supplier_code'    => '',*/
+                                          'supplier_code'    => $productObject->getSupplierReference(),
                                           'id_store' => $this->subiekt_api_warehouse_id
                                        );
          }
