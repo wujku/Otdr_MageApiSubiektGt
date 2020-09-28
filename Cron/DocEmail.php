@@ -49,8 +49,7 @@ class DocEmail extends CronObject
 
 
    protected function sendEmail($orderObject){
-      $store = $this->_storeManager->getStore()->getId();
-      $this->appState->setAreaCode('adminhtml');
+      $store = $this->_storeManager->getStore()->getId();      
 
       $dataObject = new \Magento\Framework\DataObject();
       $dataObject->setData($orderObject->getData());
@@ -92,7 +91,8 @@ class DocEmail extends CronObject
       
       parent::execute();
 
-
+      $this->appState->setAreaCode('adminhtml');
+      
       $orders_to_send_email = $this->getOrdersIds();
                 
       
