@@ -90,8 +90,7 @@ class OrderState extends CronObject
                 $shipment->save();
                 $shipment->getOrder()->save();
 
-                // Send email
-                $this->appState->setAreaCode('adminhtml');
+                // Send email                
 
                 /* @var $shipmentNotifier \Magento\Shipping\Model\ShipmentNotifier */
                 $shipmentNotifier = $objectManager->create('Magento\Shipping\Model\ShipmentNotifier');
@@ -119,6 +118,8 @@ class OrderState extends CronObject
     public function execute(){
 
         parent::execute();
+
+        $this->appState->setAreaCode('adminhtml');
 
         $subiektApi = new SubiektApi($this->api_key,$this->end_point);
         $orders_to_make_sale = $this->getOrdersIds();
