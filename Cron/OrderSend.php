@@ -130,7 +130,7 @@ class OrderSend extends CronObject
 
             if ($product->getParentItem()){continue;}
 
-            $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($product->getProductId());
+            $productObject = $objectManager->create('\Magento\Catalog\Model\Product')->load($product->getProductId());
 
             $code = $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$product->getSku();
             if(empty($code)){
