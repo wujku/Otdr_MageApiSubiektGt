@@ -90,7 +90,9 @@ class PushList extends \Magento\Framework\App\Action\Action implements CsrfAware
 		$upd = 0;
 		$ins = 0;
 		$onstore_data[$supllier_code]['products'] = array();
+		$full_data[$supllier_code]['products'] = [];
 		foreach($json_data['products'] as $code => $qty) {
+
 			if(!isset($full_data[$supllier_code]['products'][$code])){
 				$full_data[$supllier_code]['products'][$code] = $qty;
 				$ins++;
