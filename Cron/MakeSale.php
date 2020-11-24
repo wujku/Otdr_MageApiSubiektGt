@@ -142,6 +142,7 @@ class MakeSale extends CronObject
             break;
          }
 
+         $this->unlockOrder($id_order);
       }
 
       return true;
