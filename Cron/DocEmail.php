@@ -42,7 +42,7 @@ class DocEmail extends CronObject
    protected function updateOrderStatus($id_order){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET email_sell_doc_pdf_sent = 1, upd_date = NOW() WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET email_sell_doc_pdf_sent = 1, upd_date = NOW() WHERE id_order = '{$id_order}'";
       $connection->query($dml);
       $this->addLog($id_order,'Wysłano do klienta e-mail z dokumentem sprzedaży');      
    }
