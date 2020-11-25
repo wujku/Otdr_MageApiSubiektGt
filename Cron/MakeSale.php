@@ -23,7 +23,7 @@ class MakeSale extends CronObject
    protected function updateOrderStatus($id_order,$order_reference){
       $connection = $this->resource->getConnection();
       $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-      $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1, gt_sell_doc_ref =  '{$order_reference['doc_ref']}', upd_date = NOW() WHERE id_order = {$id_order}";
+      $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1, gt_sell_doc_ref =  '{$order_reference['doc_ref']}', upd_date = NOW() WHERE id_order = '{$id_order}'";
       $connection->query($dml);
       $this->setStatus($id_order,'Wygenerowano paragon/fakturę nr <b>'.$order_reference['doc_ref'].'</b> kwota:'.$order_reference['doc_amount'],$this->subiekt_api_sell_doc_status);
    }

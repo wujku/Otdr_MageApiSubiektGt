@@ -29,7 +29,7 @@ class OrderState extends CronObject
         $this->deletePdf($id_order);
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 0, gt_sell_doc_ref =  '', upd_date = NOW() WHERE id_order = {$id_order}";
+        $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 0, gt_sell_doc_ref =  '', upd_date = NOW() WHERE id_order = '{$id_order}'";
         $connection->query($dml);
         $this->addErrorLog($id_order,'Paragon został usunięty');
     }
@@ -37,7 +37,7 @@ class OrderState extends CronObject
     public function updateSellDoc($id_order,$doc_reference){
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1,gt_sell_doc_ref =  '{$doc_reference}', gt_sell_doc_pdf_request = 0, doc_file_pdf_name = '',  upd_date = NOW() WHERE id_order = {$id_order}";
+        $dml = "UPDATE {$tableName} SET gt_sell_doc_request = 1,gt_sell_doc_ref =  '{$doc_reference}', gt_sell_doc_pdf_request = 0, doc_file_pdf_name = '',  upd_date = NOW() WHERE id_order = '{$id_order}'";
         $connection->query($dml);
         $this->addLog($id_order,'Aktualizacja nr paragonu: <b>'.$doc_reference.'</b>');
 
@@ -46,7 +46,7 @@ class OrderState extends CronObject
     public function deleteOrder($id_order){
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $dml = "UPDATE {$tableName} SET gt_order_sent = 0, gt_order_ref =  '', upd_date = NOW() WHERE id_order = {$id_order}";
+        $dml = "UPDATE {$tableName} SET gt_order_sent = 0, gt_order_ref =  '', upd_date = NOW() WHERE id_order = '{$id_order}'";
         $connection->query($dml);
         $this->addErrorLog($id_order,'Usunięcie zamówienia');
     }
@@ -55,7 +55,7 @@ class OrderState extends CronObject
         $this->deletePdf($id_order);
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $dml = "DELETE FROM {$tableName}  WHERE id_order = {$id_order}";
+        $dml = "DELETE FROM {$tableName}  WHERE id_order = '{$id_order}'";
         $connection->query($dml);
         $this->addLog($id_order,'Całkowite usunięcie zamówienia z bazy');
     }

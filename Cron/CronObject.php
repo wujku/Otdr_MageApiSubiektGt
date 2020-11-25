@@ -157,7 +157,7 @@ abstract class CronObject {
       if(file_put_contents($this->getDirForPDF($this->subiekt_api_pdfs_path,$file_name,true).'/'.$file_name.'.pdf', base64_decode($pdf_data))){
           $connection = $this->resource->getConnection();
           $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-          $dml = "UPDATE {$tableName} SET gt_sell_doc_pdf_request = 1, doc_file_pdf_name = '{$file_name}', upd_date = NOW() WHERE id_order = {$id_order}";
+          $dml = "UPDATE {$tableName} SET gt_sell_doc_pdf_request = 1, doc_file_pdf_name = '{$file_name}', upd_date = NOW() WHERE id_order = '{$id_order}'";
           $connection->query($dml);
 
 
@@ -228,7 +228,7 @@ abstract class CronObject {
    protected function getPdf($id_order,$in_base64 = false){
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = {$id_order}";
+        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = '{$id_order}'";
         $result = $connection->fetchAll($query);        
         if(isset($result[0]['doc_file_pdf_name']) && !empty($result[0]['doc_file_pdf_name'])){
           $pdf_content = file_get_contents($this->getDirForPDF($this->subiekt_api_pdfs_path,$result[0]['doc_file_pdf_name']).'/'.$result[0]['doc_file_pdf_name'].'.pdf');
@@ -244,7 +244,7 @@ abstract class CronObject {
    protected function deletePdf($id_order){
         $connection = $this->resource->getConnection();
         $tableName = $this->resource->getTableName('otdr_mageapisubiektgt');
-        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = {$id_order}";
+        $query = "SELECT doc_file_pdf_name FROM {$tableName} WHERE id_order = '{$id_order}'";
         $result = $connection->fetchAll($query);        
         if(isset($result[0]['doc_file_pdf_name']) && !empty($result[0]['doc_file_pdf_name'])){
           return @unlink($this->getDirForPDF($this->subiekt_api_pdfs_path,$result[0]['doc_file_pdf_name']).'/'.$result[0]['doc_file_pdf_name'].'.pdf');
