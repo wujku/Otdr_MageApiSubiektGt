@@ -141,7 +141,7 @@ class OrderSend extends CronObject
             $price = $product->getPriceInclTax();
             //if()
             $products_array[$code] =  array(
-                                          'name'   =>                      !is_null($productObject)?$productObject->getName():$product->getName(),
+                                          'name'   =>                      (!is_null($productObject) && !empty($productObject->getName()))?$productObject->getName():$product->getName(),
                                           'price'  =>                      $price-$product->getDiscountAmount(),
                                           'qty'    =>                      intval($product->getQtyOrdered()),
                                           'price_before_discount' =>       $price,
