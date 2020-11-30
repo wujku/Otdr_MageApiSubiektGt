@@ -249,7 +249,7 @@ class OrderState extends CronObject
                                 $make_sale = true;
                                 $r_products = $p_result['data'];
                                 foreach($r_products as $rp){
-                                    if(intval($rp['on_store'])==0){
+                                    if(intval($rp['on_store_available'])<0){
                                         $make_sale = false;
                                         break;
                                     }
