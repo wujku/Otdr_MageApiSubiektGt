@@ -236,10 +236,9 @@ class OrderState extends CronObject
                             //check that
                             $o_products = $order_data->getAllItems();
                             $products_array  = array();
-                            foreach($o_products as $op){
-                                $productObject = $objectManager->get('\Magento\Catalog\Model\Product')->load($op->getProductId());
+                            foreach($o_products as $op){                                
                                 $products_array[] = array(
-                                    'code'   =>  $this->subiekt_api_ean_attrib!=""?$productObject->{"get{$this->subiekt_api_ean_attrib}"}():$op->getSku(),
+                                    'code'   =>  $op->getSku(),
                                     'id_store' => $this->subiekt_api_warehouse_id,
                                 );
                             }
