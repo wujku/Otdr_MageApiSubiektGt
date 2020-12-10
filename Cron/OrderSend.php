@@ -142,13 +142,13 @@ class OrderSend extends CronObject
             //if()
             $products_array[$code] =  array(
                                           'name'   =>                      (!is_null($productObject) && !empty($productObject->getName()))?$productObject->getName():$product->getName(),
-                                          'price'  =>                      $price-$product->getDiscountAmount(),
+                                          'price'  =>                      $price-round($product->getDiscountAmount()/$product->getQtyOrdered(),2),
                                           'qty'    =>                      intval($product->getQtyOrdered()),
                                           'price_before_discount' =>       $price,
                                           'code'   =>                      $code,
                                           'time_of_delivery'   =>          2,
                                           //'net_price'          => true,
-                                          'supplier_code'    => $productObject->getSupplierReference(),
+                                          'supplier_code'    => (!is_null($productObject) && !empty($productObject->getSupplierReference()))?$productObject->getSupplierReference():'', 
                                           'id_store' => $this->subiekt_api_warehouse_id
                                        );
          }
