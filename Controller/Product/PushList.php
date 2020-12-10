@@ -38,6 +38,7 @@ class PushList extends \Magento\Framework\App\Action\Action implements CsrfAware
             exit(json_encode($json_response,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
+        date_default_timezone_set('Europe/Warsaw');
 		$json_response = array('state'=>'success');
 
 		$jsonStr = @file_get_contents("php://input");
