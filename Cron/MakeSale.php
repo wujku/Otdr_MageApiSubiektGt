@@ -87,7 +87,10 @@ class MakeSale extends CronObject
          }
          if($result['state'] == 'fail'){
             $this->unlockOrder($id_order);
-            $this->addErrorLog($id_order,$result['message']);
+            if(!mb_ereg_match(".*Lock request time out period exceeded.",$result['message']))
+            {
+               $this->addErrorLog($id_order,$result['message']);    
+            }
             print("Error: {$result['message']}\n");
             continue;
          }
