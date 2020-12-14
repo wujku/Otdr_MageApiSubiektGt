@@ -114,7 +114,7 @@ class OrderSend extends CronObject
                                                       'city'         => $customer['city'],
                                                       'post_code'    => $customer['postcode'],
                                                       'phone'        => $customer['telephone'],
-                                                      'ref_id'       => trim($this->subiekt_api_prefix.'CS '.$customer['entity_id']),
+                                                      'ref_id'       => trim($this->subiekt_api_prefix.'CS '.$customer['entity_id'].'-'.$id_order),
                                                       'is_company'   => strlen($customer['vat_id'])>0?true:false,
                                                       'company_name' => $customer['company'],
                                                       'tax_id'       => $customer['vat_id'],
