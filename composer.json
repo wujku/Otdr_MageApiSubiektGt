@@ -14,9 +14,6 @@
   "autoload": {
     "files": [
       "registration.php"
-    ],
-    "psr-4": {
-      "Otdr\\MageApiSubiektGt\\": "src/Otdr_MageApiSubiektGt/",
-    }
+    ]
   }
 }
